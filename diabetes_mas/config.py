@@ -1,0 +1,20 @@
+"""Ngưỡng lâm sàng và trần an toàn dùng chung (mg/dL, đơn vị insulin, phút)."""
+HYPO_L1 = 70
+HYPO_L2 = 54
+HYPER_KETONE = 250
+HYPER_SEVERE = 300
+HYPER_CRITICAL = 400
+TARGET_GLUCOSE = 110
+MAX_CORRECTION_DOSE = 4.0
+MAX_MEAL_BOLUS = 10.0
+MAX_TOTAL_BOLUS = 12.0
+INSULIN_ACTION_MIN = 180
+READING_STALE_MIN = 20
+MIN_READINGS_FOR_DOSE = 4
+MIN_READINGS_FOR_STATS = 12
+CARB_SHARE = 0.5
+SNACK_CARB_G = 15
+GLUCOSE_MIN_VALID = 20
+GLUCOSE_MAX_VALID = 600
+MMOL_SUSPECT_MAX = 35
+DISCLAIMER = "Công cụ hỗ trợ học tập, không phải thiết bị y tế, không thay thế bác sĩ."
