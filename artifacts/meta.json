@@ -31,5 +31,31 @@
     "hba1c_only_roc_auc": 0.8480999055408088,
     "glucose_only_roc_auc": 0.792030812827319,
     "logistic_roc_auc": 0.9635946803931417
+  },
+  "forecast_metrics": {
+    "data": "CGM mô phỏng, chia theo chuỗi",
+    "n_test_series": 45,
+    "n_windows": 10272,
+    "n_hypo_windows": 483,
+    "hold_last": {
+      "mae": 6.697471618652344,
+      "hypo_recall": 0.0,
+      "hypo_precision": null
+    },
+    "linear": {
+      "mae": 6.681211380529007,
+      "hypo_recall": 0.8405797101449275,
+      "hypo_precision": 0.6353677621283255
+    },
+    "lstm": {
+      "mae": 4.422005653381348,
+      "hypo_recall": 0.6169772256728778,
+      "hypo_precision": 0.9581993569131833
+    },
+    "conservative_min": {
+      "mae": 4.813460356461296,
+      "hypo_recall": 0.8426501035196687,
+      "hypo_precision": 0.6359375
+    }
   }
 }

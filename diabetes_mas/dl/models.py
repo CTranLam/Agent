@@ -17,3 +17,14 @@ class DiabetesNet(nn.Module):
 
     def forward(self, x):
         return self.net(x).squeeze(-1)
+
+
+class GlucoseLSTM(nn.Module):
+    def __init__(self, hidden: int = 64, horizon: int = 6):
+        super().__init__()
+        self.lstm = nn.LSTM(input_size=1, hidden_size=hidden, num_layers=2, batch_first=True, dropout=0.1)
+        self.head = nn.Sequential(nn.Linear(hidden, 64), nn.ReLU(), nn.Linear(64, horizon))
+
+    def forward(self, x):  # x: (B, T, 1)
+        out, _ = self.lstm(x)
+        return self.head(out[:, -1])  # (B, horizon)
