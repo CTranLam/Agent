@@ -57,5 +57,28 @@
       "hypo_recall": 0.8426501035196687,
       "hypo_precision": 0.6359375
     }
+  },
+  "rl_metrics": {
+    "data": "simulator đồ chơi, 20.000 quyết định; chưa áp rule an toàn",
+    "no_insulin": {
+      "tir": 0.36135,
+      "dose_hypo": 0.0,
+      "above_180": 0.58355
+    },
+    "formula": {
+      "tir": 0.8496,
+      "dose_hypo": 0.0071,
+      "above_180": 0.0882
+    },
+    "formula_trend": {
+      "tir": 0.87325,
+      "dose_hypo": 0.0,
+      "above_180": 0.07165
+    },
+    "rl": {
+      "tir": 0.864,
+      "dose_hypo": 0.0062,
+      "above_180": 0.0747
+    }
   }
 }
