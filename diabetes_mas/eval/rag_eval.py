@@ -30,7 +30,8 @@ def evaluate() -> dict:
     return {"n_questions": len(gold),
             "word_overlap": _score(lambda q: _overlap_rank(kb.recommendations, q), gold),
             "bm25": _score(lambda q: [e.title for e in rag.retrieve(q, k=len(kb.recommendations))], gold),
-            "caveat": "Bộ câu hỏi do chính người viết KB soạn nên số đo có xu hướng lạc quan."}
+            "caveat": "Bộ câu hỏi do chính người viết KB soạn nên số đo có xu hướng lạc quan; "
+                      "bộ lọc từ chuyên môn ngắn được thêm sau khi thấy câu trượt."}
 
 
 if __name__ == "__main__":

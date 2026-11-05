@@ -29,6 +29,7 @@ TOPIC_KEYWORDS = {
 }
 STOP = set("""bi la va cua co khong thi ma o toi minh ban nay hom gi nao the phai lam nhu sao nen duoc cho
             mot cac nhung voi khi neu de tu ve trong ngoai tren duoi rat nhieu it ai dau""".split())
+DOMAIN_SHORT = {"carb", "lieu", "muoi", "man", "thuoc", "tiem"}
 MIN_UNIGRAM_LEN = 5  # shortcut: lọc ngoài phạm vi bằng độ dài từ; nếu cần chính xác hơn thì dùng embedding
 
 
@@ -75,8 +76,9 @@ class RAG:
     def retrieve(self, query: str, k: int = 3, topic: str | None = None) -> list[Evidence]:
         q = Counter(_query_features(query))
         # ngoài phạm vi: phải khớp bigram hoặc một từ đủ dài, không chỉ vài âm tiết rời
+        unexpanded = set(tokens(query))
         useful = {t for t in _query_features(query, question_words=False)
-                  if t in self._idf and ("_" in t or len(t) >= MIN_UNIGRAM_LEN)}
+                  if (t in self._idf or t in unexpanded & DOMAIN_SHORT) and ("_" in t or len(t) >= MIN_UNIGRAM_LEN or t in DOMAIN_SHORT)}
         if not useful:
             return []
         raw = [self._bm25(q, i) for i in range(len(self.docs))]

@@ -43,3 +43,7 @@ def test_interactions_only_when_both_taken():
 
 def test_kb_not_marked_reviewed():
     assert load_kb().meta["reviewed"] is False
+
+@pytest.mark.parametrize("q", ["đếm carb để tính liều", "ăn mặn có hại không"])
+def test_short_domain_words_not_filtered(q):
+    assert RAG(load_kb()).retrieve(q)
