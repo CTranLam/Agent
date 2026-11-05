@@ -1,13 +1,19 @@
 """Agent điều phối: lập kế hoạch theo tình trạng, gọi agent, gọi Auditor, tổng hợp báo cáo."""
+import json
 import math
 
 from .. import config as C
+from ..guardrail import is_grounded
 from ..schemas import LEVEL_ORDER, AnalysisContext, Report
 from .auditor import audit
 from .exercise_agent import ExerciseAgent
 from .glucose_agent import GlucoseAgent
 from .medication_agent import MedicationAgent
 from .nutrition_agent import NutritionAgent
+
+
+SYNTH_SYSTEM = ("Viết bản tư vấn ngắn bằng tiếng Việt cho người bệnh từ dữ liệu JSON của các agent. Chỉ diễn đạt lại, "
+                "không thêm con số, liều hay thuốc mới; không bỏ cảnh báo nào.")
 
 
 def validate_readings(readings) -> None:
@@ -59,4 +65,20 @@ class Orchestrator:
         sources = sorted({f"{e.source}: {e.title}" for r in results.values() for e in r.evidence})
         report = Report(plan, steps, ctx.classification, ctx.forecast, results, alerts,
                         [f"{f.rule}: {f.message}" for f in findings], None, None, sources, C.DISCLAIMER)
+        report.synthesis, report.synthesis_note = self._synthesize(report)
         return report
+
+    def _synthesize(self, rep: Report) -> tuple[str | None, str | None]:
+        if self.llm is None or not self.llm.enabled:
+            return None, "Chưa cấu hình LLM (ANTHROPIC_API_KEY): hiển thị báo cáo của các agent."
+        src = json.dumps({"phan_loai": rep.classification["class_name"], "nguy_co": rep.classification["risk_level"],
+                          "canh_bao": [a.message for a in rep.alerts],
+                          "agents": {k: {"tom_tat": r.summary, "viec_can_lam": r.actions} for k, r in rep.results.items()}},
+                         ensure_ascii=False)
+        text = self.llm.complete(SYNTH_SYSTEM, src)
+        if not text:
+            return None, f"LLM lỗi ({self.llm.last_error}): dùng báo cáo của các agent."
+        ok, bad = is_grounded(text, src)
+        if not ok:
+            return None, f"Đã loại bản tổng hợp LLM vì chứa số liệu ngoài dữ liệu của agent ({', '.join(bad)})."
+        return text, None

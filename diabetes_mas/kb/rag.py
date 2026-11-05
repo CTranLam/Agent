@@ -3,10 +3,13 @@ import math
 import re
 from collections import Counter
 
+from ..guardrail import is_grounded
 from ..schemas import Evidence
 from .store import KnowledgeBase, fold
 
 K1, B = 1.5, 0.75
+ANSWER_SYSTEM = ("Bạn là trợ lý tiểu đường. Chỉ trả lời bằng tiếng Việt, chỉ dựa vào phần Bằng chứng; không thêm con số, "
+                 "liều thuốc hay tên thuốc ngoài bằng chứng. Nếu bằng chứng không đủ thì nói rõ và khuyên hỏi bác sĩ.")
 # Cách nói đời thường -> thuật ngữ trong KB. Khoá và giá trị đều đã bỏ dấu.
 SYNONYMS = {
     "tut duong": "ha duong huyet hypoglycemia", "tut duong huyet": "ha duong huyet hypoglycemia",
@@ -99,3 +102,18 @@ class RAG:
         if not evidence:
             return "Không tìm thấy thông tin phù hợp trong cơ sở tri thức. Hãy hỏi về tiểu đường hoặc hỏi bác sĩ."
         return "\n\n".join(f"{i + 1}. {e.title}\n{e.text}\n(Nguồn: {e.source})" for i, e in enumerate(evidence))
+
+    def answer(self, question: str, llm=None) -> dict:
+        ev = self.retrieve(question)
+        result = {"answer": self.extractive(ev), "evidence": [vars(e) for e in ev], "mode": "extractive", "note": None}
+        if not ev or llm is None or not llm.enabled:
+            return result
+        src = "\n".join(f"[{e.source}] {e.title}: {e.text}" for e in ev)
+        out = llm.complete(ANSWER_SYSTEM, f"Bằng chứng:\n{src}\n\nCâu hỏi: {question}")
+        if out is None:
+            result["note"] = f"LLM lỗi ({llm.last_error}), dùng trích nguyên văn."
+        elif is_grounded(out, src)[0]:
+            result.update(answer=out, mode="llm")
+        else:
+            result["note"] = "Đã bỏ câu trả lời của LLM vì chứa số liệu ngoài bằng chứng."
+        return result
