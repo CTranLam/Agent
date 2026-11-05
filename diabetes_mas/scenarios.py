@@ -16,7 +16,7 @@ SCENARIOS = {
     "2": {"title": "Tiền tiểu đường",
           "profile": PatientProfile(name="Ca 2", age=50, sex="M", weight_kg=51, height_cm=170, hba1c=5.8),
           "readings": [124.0]},
-    "3": {"title": "Đạt tiêu chuẩn ADA dù mạng dưới ngưỡng", "prob": 0.01,
+    "3": {"title": "HbA1c 6,7%: đạt tiêu chuẩn ADA", "prob": 0.01,
           "profile": PatientProfile(name="Ca 3", age=30, sex="M", weight_kg=55, height_cm=163, hba1c=6.7),
           "readings": [113.0]},
     "4": {"title": "Type 1 dùng insulin, sắp ăn, vừa tiêm 90 phút trước",

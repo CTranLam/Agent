@@ -127,3 +127,9 @@ def test_exercise_agent_gate_closed_no_plan():
 def test_exercise_agent_cardiac_warning():
     r = ExerciseAgent(kb, rag).run(ctx(PatientProfile(heart_disease=True)))
     assert any("đau ngực" in a for a in r.actions)
+
+def test_no_carb_reminder_when_carbs_given():
+    r = NutritionAgent(kb, rag).run(ctx(T1(), code="T1", carbs=60))
+    assert not any("nhập lượng carb" in a for a in r.actions)
+    r = NutritionAgent(kb, rag).run(ctx(T1(), code="T1"))
+    assert any("nhập lượng carb" in a for a in r.actions)

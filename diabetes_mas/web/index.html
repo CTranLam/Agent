@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hệ đa agent hỗ trợ tiểu đường</title>
+<link rel="icon" href="data:,">
+<style>
+:root{--teal:#0f766e;--teal-d:#115e59;--teal-l:#e6f4f1;--ink:#14272e;--mute:#5f7178;--line:#e3e9ec;--bg:#f3f7f8;--card:#fff;
+--red:#b42318;--red-l:#fdecea;--amber:#b25e09;--amber-l:#fff4e2;--blue:#1d5fa8;--blue-l:#e9f1fb;--green:#157a4f;--green-l:#dcf3e7}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:14px/1.5 Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+header{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:10px 24px;flex-wrap:wrap}
+.logo{width:26px;height:26px;border-radius:8px;background:var(--teal);display:grid;place-items:center;flex:none}
+.brand{font-weight:700;font-size:15px}
+.tabs{display:flex;gap:2px;background:var(--bg);border-radius:10px;padding:3px;margin-left:8px}
+.tabs button{border:0;background:transparent;padding:5px 14px;border-radius:8px;cursor:pointer;color:var(--mute);font-weight:500}
+.tabs button[aria-selected=true]{background:#fff;color:var(--teal);font-weight:600;box-shadow:0 0 0 1px var(--line)}
+.status{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+.chip{background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:1px 10px;font-size:12px;color:var(--mute)}
+.chip b{color:var(--ink);font-weight:600}
+main{max-width:1240px;margin:0 auto;padding:20px 24px 90px}
+.layout{display:grid;grid-template-columns:320px minmax(0,1fr);gap:18px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.card h2{font-size:15px;margin:0 0 2px}
+.hint{color:var(--mute);font-size:12px;margin:0 0 10px}
+form .row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+label.f{display:block;font-size:12.5px;color:var(--mute);margin-bottom:10px}
+form .row label.f{margin-bottom:0}
+.inp{position:relative;display:block;margin-top:3px}
+input[type=number],input[type=text],select,textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:7px 10px;background:#fff}
+textarea{resize:vertical;min-height:58px}
+.inp i{position:absolute;right:10px;top:8px;font-style:normal;color:var(--mute);font-size:12px;pointer-events:none}
+.inp input{padding-right:46px}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--teal);outline-offset:1px}
+.seg{display:flex;background:var(--bg);border-radius:9px;padding:3px;margin-top:3px}
+.seg label{flex:1;text-align:center;padding:5px 4px;border-radius:7px;cursor:pointer;color:var(--mute);font-size:13px}
+.seg input{position:absolute;opacity:0;width:0;height:0}
+.seg label:has(input:checked){background:#fff;color:var(--ink);font-weight:600;box-shadow:0 0 0 1px var(--line)}
+.seg label:has(input:focus-visible){outline:2px solid var(--teal)}
+.toggles{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}
+.tg{border:1px solid var(--line);border-radius:999px;padding:3px 11px;cursor:pointer;font-size:12.5px;color:var(--mute);display:inline-flex;align-items:center;gap:6px;background:#fff}
+.tg input{accent-color:var(--teal);margin:0}
+.tg:has(input:checked){border-color:var(--teal);background:var(--teal-l);color:var(--teal-d);font-weight:600}
+details summary{cursor:pointer;font-size:13px;color:var(--ink);margin-bottom:8px}
+.primary{width:100%;border:0;border-radius:10px;background:var(--teal);color:#fff;font-weight:600;padding:10px;cursor:pointer;margin-top:4px}
+.primary:hover{background:var(--teal-d)}
+.primary:disabled{opacity:.6;cursor:wait}
+.error{color:var(--red);background:var(--red-l);border-radius:9px;padding:8px 10px;font-size:13px;margin-top:10px}
+.stack{display:grid;gap:14px}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:18px}
+.tag{font-size:11.5px;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:1px 9px;color:var(--mute);margin-left:6px;font-weight:500}
+.tag.danger{background:var(--red-l);border-color:#f6c9c4;color:var(--red);font-weight:600}
+.big{font-size:44px;font-weight:700;line-height:1.05;margin-top:8px;letter-spacing:-1px}
+.big small{font-size:13px;color:var(--mute);font-weight:500;letter-spacing:0;margin-left:4px}
+.pill{display:inline-block;border-radius:999px;font-size:12.5px;font-weight:600;padding:2px 11px;margin:6px 0 2px}
+.pill.ok{background:var(--green-l);color:var(--green)} .pill.warn{background:var(--amber-l);color:var(--amber)} .pill.bad{background:var(--red-l);color:var(--red)}
+.gauge{position:relative;margin:26px 0 22px;max-width:520px}
+.bar{display:flex;height:9px;border-radius:6px;overflow:hidden}
+.bar span:nth-child(1){background:#f4b6ae}.bar span:nth-child(2){background:#bfe6d2}.bar span:nth-child(3){background:#f9d9a6}
+.mark{position:absolute;top:-3px;width:15px;height:15px;border-radius:50%;background:var(--ink);border:2px solid #fff;transform:translateX(-50%)}
+.marklbl{position:absolute;top:-22px;transform:translateX(-50%);font-size:11.5px;color:var(--mute);white-space:nowrap}
+.tick{position:absolute;top:13px;transform:translateX(-50%);font-size:11px;color:var(--mute)}
+.mini{border:1px solid var(--line);border-radius:10px;padding:8px 11px;margin-bottom:8px}
+.mini:last-child{margin-bottom:0}
+.mini .k{font-size:11.5px;color:var(--mute)} .mini .v{font-weight:700;font-size:14.5px} .mini .s{font-size:11px;color:var(--mute);line-height:1.35}
+.risk{display:grid;grid-template-columns:58px 1fr 38px;gap:6px;align-items:center;font-size:12px;margin-top:3px}
+.risk .t{height:4px;background:var(--line);border-radius:3px;overflow:hidden}.risk .t b{display:block;height:100%;background:var(--teal)}
+.risk span:last-child{text-align:right}
+.alert{border-radius:10px;padding:8px 12px;margin-top:8px;font-size:13.5px}
+.alert small{display:block;color:var(--mute);font-size:11.5px}
+.alert b{font-weight:600}
+.alert.critical{background:var(--red-l);color:#7c1a12}.alert.warning{background:var(--amber-l);color:#6e3d06}.alert.info{background:var(--blue-l);color:#17406f}
+.agents{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.agent.wide{grid-column:1/-1}
+.agent h3{margin:0 0 4px;font-size:14.5px;display:flex;align-items:center;gap:7px}
+.dot{width:9px;height:9px;border-radius:3px;display:inline-block}
+.agent ul{margin:8px 0 0;padding-left:18px}.agent li{margin-bottom:3px}
+table{width:100%;border-collapse:collapse;margin-top:6px;font-size:13px}
+th{text-align:left;color:var(--mute);font-weight:500;font-size:12px}
+th,td{padding:6px 8px 6px 0;border-bottom:1px solid var(--line)}
+td:last-child,th:last-child{text-align:right;padding-right:0}
+.sub{font-size:12.5px;color:var(--mute);margin-top:6px}
+.dose{display:flex;gap:10px;margin:8px 0;flex-wrap:wrap}
+.dose div{flex:1;min-width:110px;background:var(--teal-l);border-radius:10px;padding:8px 12px}
+.dose b{display:block;font-size:20px;color:var(--teal-d)}
+.dose span{font-size:12px;color:var(--mute)}
+.empty{color:var(--mute);text-align:center;padding:60px 20px}
+svg text{font-family:inherit}
+.fab{position:fixed;right:24px;bottom:22px;z-index:8;border:0;border-radius:999px;background:var(--teal);color:#fff;font-weight:600;padding:10px 18px;cursor:pointer;box-shadow:0 6px 18px rgba(15,118,110,.35);display:flex;gap:7px;align-items:center}
+.chat{position:fixed;right:24px;bottom:22px;z-index:9;width:370px;max-width:calc(100vw - 32px);height:min(600px,calc(100vh - 90px));background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 14px 44px rgba(20,39,46,.2);display:flex;flex-direction:column;overflow:hidden}
+.chat[hidden],.fab[hidden]{display:none}
+.chat header{position:static;padding:10px 12px;gap:9px;flex-wrap:nowrap}
+.chat header .t{font-weight:700;font-size:13.5px;line-height:1.2}
+.chat header .s{font-size:11.5px;color:var(--mute)}
+.chat header .s::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);margin-right:5px;vertical-align:1px}
+.ghost{border:1px solid var(--line);background:#fff;border-radius:999px;padding:2px 10px;font-size:12px;cursor:pointer;margin-left:auto}
+.icon{border:0;background:transparent;cursor:pointer;font-size:15px;color:var(--mute);padding:2px 5px}
+.msgs{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:10px;background:#fbfcfc}
+.bot{border:1px solid var(--line);background:#fff;border-radius:12px;padding:9px 11px;font-size:13px;margin-right:18px}
+.me{align-self:flex-end;background:var(--teal);color:#fff;border-radius:12px;padding:6px 12px;font-size:13px;max-width:82%}
+.mode{font-size:11.5px;background:var(--bg);border-radius:8px;padding:3px 8px;color:var(--mute);margin-bottom:6px;display:block}
+.sec{padding:7px 0;border-bottom:1px solid var(--line)}.sec:last-of-type{border-bottom:0}
+.sec b{display:block;color:var(--teal-d);font-size:13px}
+.num{display:inline-grid;place-items:center;width:17px;height:17px;border-radius:50%;background:var(--teal-l);color:var(--teal-d);font-size:11px;margin-right:5px;font-weight:700}
+.bot details summary{font-size:12px;color:var(--mute);margin:5px 0 0}.bot details div{font-size:12px;color:var(--mute)}
+.composer{display:flex;gap:7px;padding:9px 10px 2px}
+.composer input{border-radius:10px}
+.send{border:0;background:var(--teal);color:#fff;border-radius:10px;width:38px;cursor:pointer;flex:none}
+.foot{font-size:11px;color:var(--mute);text-align:center;padding:2px 0 7px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--mute);margin:6px 0 10px}
+.legend i{display:inline-block;width:18px;height:3px;border-radius:2px;vertical-align:3px;margin-right:5px}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.hero{grid-template-columns:1fr}.agents{grid-template-columns:1fr}main{padding:14px 12px 90px}header{padding:9px 12px}.status{margin-left:0}}
+</style>
+</head>
+<body>
+<header>
+  <span class="logo" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="#fff"><path d="M12 2s7 7.6 7 12.6A7 7 0 1 1 5 14.600C5 9.600 12 2 12 2z"/></svg></span>
+  <span class="brand">Hệ đa agent hỗ trợ tiểu đường</span>
+  <div class="tabs" role="tablist">
+    <button role="tab" id="tab-a" aria-selected="true" aria-controls="view-a">Phân tích</button>
+    <button role="tab" id="tab-g" aria-selected="false" aria-controls="view-g">Đồ thị tri thức</button>
+  </div>
+  <div class="status" id="status"></div>
+</header>
+<main>
+<section id="view-a" class="layout" role="tabpanel" aria-labelledby="tab-a">
+  <form id="form" class="card" novalidate>
+    <h2>Thông tin bệnh nhân</h2>
+    <p class="hint">Chỉ cần các ô dưới đây. Phần còn lại đã có giá trị mặc định.</p>
+    <label class="f">Ca mẫu
+      <select id="scenario" class="inp"><option value="">Tự nhập</option></select>
+    </label>
+    <div class="row">
+      <div class="f" style="font-size:12.5px;color:var(--mute)">Giới tính
+        <div class="seg" role="radiogroup" aria-label="Giới tính">
+          <label><input type="radio" name="sex" value="M" checked>Nam</label>
+          <label><input type="radio" name="sex" value="F">Nữ</label>
+        </div>
+      </div>
+      <label class="f">Tuổi<span class="inp"><input type="number" id="age" value="55" min="1" max="120"></span></label>
+    </div>
+    <div class="row">
+      <label class="f">Chiều cao<span class="inp"><input type="number" id="height_cm" value="170" min="100" max="250"><i>cm</i></span></label>
+      <label class="f">Cân nặng<span class="inp"><input type="number" id="weight_kg" value="60" min="20" max="300"><i>kg</i></span></label>
+    </div>
+    <div class="row">
+      <label class="f">HbA1c<span class="inp"><input type="number" id="hba1c" value="5.1" step="0.1" min="3" max="20"><i>%</i></span></label>
+      <label class="f">Đường huyết hiện tại<span class="inp"><input type="number" id="current" value="100" step="0.1"><i id="unitlabel">mg/dL</i></span></label>
+    </div>
+    <div class="f" style="font-size:12.5px;color:var(--mute);margin-bottom:4px">Loại tiểu đường
+      <div class="seg" role="radiogroup" aria-label="Loại tiểu đường">
+        <label><input type="radio" name="dtype" value="" checked>Chưa biết</label>
+        <label><input type="radio" name="dtype" value="T1">Type 1</label>
+        <label><input type="radio" name="dtype" value="T2">Type 2</label>
+      </div>
+    </div>
+    <p class="hint">Nếu chưa biết, hệ thống tự phân loại. Có kháng thể hoặc C-peptide thì nhập ở mục Nâng cao để phân loại chính xác hơn.</p>
+    <div class="toggles">
+      <label class="tg"><input type="checkbox" id="hypertension">Tăng huyết áp</label>
+      <label class="tg"><input type="checkbox" id="on_insulin">Đang dùng insulin</label>
+    </div>
+    <label class="f">Thuốc đang dùng
+      <input type="text" id="medications" class="inp" placeholder="Metformin 850mg, Gliclazide 60mg">
+    </label>
+    <p class="hint">Cách nhau bằng dấu phẩy. Hệ thống rà soát chống chỉ định.</p>
+    <details>
+      <summary>Nâng cao (không bắt buộc)</summary>
+      <label class="f">Chuỗi đường huyết (mỗi 5 phút, cũ đến mới)
+        <textarea id="series" placeholder="120, 125, 130 ... (bỏ trống thì dùng số hiện tại)"></textarea>
+      </label>
+      <div class="row">
+        <label class="f">Đơn vị số đo<select id="unit" class="inp"><option>mg/dL</option><option>mmol/L</option></select></label>
+        <label class="f">Bữa<select id="meal_type" class="inp"><option value="lunch">Trưa</option><option value="breakfast">Sáng</option><option value="dinner">Tối</option></select></label>
+      </div>
+      <div class="row">
+        <label class="f">Carb dự định ăn<span class="inp"><input type="number" id="planned_carbs" min="0" max="300"><i>g</i></span></label>
+        <label class="f">Số đo cách đây<span class="inp"><input type="number" id="reading_age_min" min="0"><i>phút</i></span></label>
+      </div>
+      <div class="row">
+        <label class="f">Lần tiêm trước<span class="inp"><input type="number" id="minutes_since_insulin" min="0"><i>phút</i></span></label>
+        <label class="f">Liều lần trước<span class="inp"><input type="number" id="last_insulin_units" min="0" step="0.5"><i>đv</i></span></label>
+      </div>
+      <div class="row">
+        <label class="f">ISF (mg/dL/đv)<input type="number" id="isf" class="inp" value="40" min="5" max="200"></label>
+        <label class="f">ICR (g/đv)<input type="number" id="icr" class="inp" value="12" min="1" max="100"></label>
+      </div>
+      <div class="row">
+        <label class="f">eGFR<input type="number" id="egfr" class="inp" value="90" min="0" max="200"></label>
+        <label class="f">Số năm mắc bệnh<input type="number" id="duration_years" class="inp" value="0" min="0" max="100"></label>
+      </div>
+      <div class="row">
+        <label class="f">C-peptide (ng/mL)<input type="number" id="c_peptide" class="inp" step="0.1" min="0"></label>
+        <label class="f">Đường huyết đói<input type="number" id="fasting_glucose" class="inp" min="20" max="600"></label>
+      </div>
+      <label class="f">Kháng thể tự miễn
+        <select id="autoantibody" class="inp"><option value="">Chưa xét nghiệm</option><option value="true">Dương tính</option><option value="false">Âm tính</option></select>
+      </label>
+      <label class="f">Dị ứng thực phẩm
+        <input type="text" id="allergies" class="inp" placeholder="tôm, cá">
+      </label>
+      <div class="toggles">
+        <label class="tg"><input type="checkbox" id="heart_disease">Bệnh tim</label>
+        <label class="tg"><input type="checkbox" id="heart_failure">Suy tim</label>
+        <label class="tg"><input type="checkbox" id="pregnant">Mang thai</label>
+        <label class="tg"><input type="checkbox" id="vegetarian">Ăn chay</label>
+        <label class="tg"><input type="checkbox" id="pancreatitis_history">Tiền sử viêm tụy</label>
+        <label class="tg"><input type="checkbox" id="mtc_men2_history">Ung thư giáp/MEN2</label>
+      </div>
+    </details>
+    <button class="primary" id="go" type="submit">Phân tích</button>
+    <div class="error" id="err" role="alert" hidden></div>
+  </form>
+  <div class="stack" id="out" aria-live="polite">
+    <div class="card empty">Nhập thông tin rồi bấm <b>Phân tích</b> để nhận tư vấn.</div>
+  </div>
+</section>
+<section id="view-g" role="tabpanel" aria-labelledby="tab-g" hidden>
+  <div class="card">
+    <h2>Đồ thị tri thức</h2>
+    <p class="hint" id="gmeta"></p>
+    <div class="legend">
+      <span><i style="background:#b42318"></i>Chống chỉ định</span>
+      <span><i style="background:#d98a1f"></i>Thận trọng</span>
+      <span><i style="background:#1d5fa8"></i>Tương tác thuốc</span>
+      <span><i style="background:#0f766e"></i>Thuốc thay thế</span>
+    </div>
+    <div id="graph" style="overflow:auto"></div>
+    <p class="sub" id="gnote">Di chuột lên một đường để xem chi tiết.</p>
+  </div>
+</section>
+</main>
+<button class="fab" id="fab" type="button">💬 Hỏi đáp</button>
+<aside class="chat" id="chat" hidden aria-label="Trợ lý tiểu đường">
+  <header>
+    <span class="logo" aria-hidden="true">💬</span>
+    <div><div class="t">Trợ lý tiểu đường</div><div class="s">Trả lời từ ADA, WHO, Bộ Y tế</div></div>
+    <button class="ghost" id="reset" type="button">Làm mới</button>
+    <button class="icon" id="close" type="button" aria-label="Thu nhỏ">⌄</button>
+  </header>
+  <div class="msgs" id="msgs" aria-live="polite"></div>
+  <form class="composer" id="askf">
+    <input type="text" id="q" placeholder="Nhập câu hỏi..." aria-label="Câu hỏi" maxlength="1000" autocomplete="off">
+    <button class="send" type="submit" aria-label="Gửi">➤</button>
+  </form>
+  <div class="foot">Chỉ mang tính tham khảo, không thay thế bác sĩ.</div>
+</aside>
+<script>
+const $ = id => document.getElementById(id);
+// Mọi dữ liệu đưa vào DOM đi qua text node, không dùng innerHTML, để tránh chèn mã.
+function el(tag, attrs, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (k === "class") e.className = v; else if (k === "style") e.style.cssText = v; else e.setAttribute(k, v);
+  }
+  for (const k of kids.flat()) if (k !== null && k !== undefined) e.append(k);
+  return e;
+}
+const svgEl = (tag, attrs, ...kids) => {
+  const e = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  for (const [k, v] of Object.entries(attrs || {})) e.setAttribute(k, v);
+  kids.forEach(k => e.append(k));
+  return e;
+};
+const num = id => { const v = $(id).value.trim(); return v === "" ? null : Number(v); };
+const list = id => $(id).value.split(",").map(s => s.trim()).filter(Boolean);
+const AGENT = {glucose: ["Đường huyết", "#1d5fa8"], nutrition: ["Dinh dưỡng", "#d98a1f"], medication: ["Thuốc & insulin", "#7c5cc4"], exercise: ["Vận động", "#157a4f"]};
+const LEVEL = {critical: "Khẩn", warning: "Cảnh báo", info: "Lưu ý"};
+
+function buildPayload() {
+  const unit = $("unit").value;
+  const series = $("series").value.trim();
+  let readings;
+  if (series) {
+    readings = series.split(/[\s,;]+/).filter(Boolean).map(Number);
+    if (readings.some(Number.isNaN)) throw new Error("Chuỗi đường huyết chỉ được chứa số, cách nhau bằng dấu phẩy.");
+  } else {
+    const c = num("current");
+    if (c === null) throw new Error("Hãy nhập đường huyết hiện tại.");
+    readings = [c];
+  }
+  const profile = {
+    age: num("age"), sex: document.querySelector("[name=sex]:checked").value, weight_kg: num("weight_kg"), height_cm: num("height_cm"),
+    hba1c: num("hba1c"), egfr: num("egfr"), isf: num("isf"), icr: num("icr"), duration_years: num("duration_years") ?? 0,
+    fasting_glucose: num("fasting_glucose"), c_peptide: num("c_peptide"),
+    autoantibody: $("autoantibody").value === "" ? null : $("autoantibody").value === "true",
+    diabetes_type_known: document.querySelector("[name=dtype]:checked").value || null,
+    medications: list("medications"), allergies: list("allergies"),
+  };
+  for (const k of ["hypertension","on_insulin","heart_disease","heart_failure","pregnant","vegetarian","pancreatitis_history","mtc_men2_history"]) profile[k] = $(k).checked;
+  for (const k of ["age","weight_kg","height_cm","hba1c","egfr","isf","icr"]) if (profile[k] === null) throw new Error("Hãy điền đủ các ô bắt buộc (tuổi, chiều cao, cân nặng, HbA1c, eGFR, ISF, ICR).");
+  return {profile, readings, unit, planned_carbs: num("planned_carbs"), minutes_since_insulin: num("minutes_since_insulin"),
+          last_insulin_units: num("last_insulin_units"), reading_age_min: num("reading_age_min"), meal_type: $("meal_type").value};
+}
+
+const FIELD_VI = {age:"Tuổi",weight_kg:"Cân nặng",height_cm:"Chiều cao",hba1c:"HbA1c",egfr:"eGFR",isf:"ISF",icr:"ICR",readings:"Số đo đường huyết",planned_carbs:"Carb dự định",minutes_since_insulin:"Thời gian từ lần tiêm",last_insulin_units:"Liều lần trước",reading_age_min:"Tuổi số đo",fasting_glucose:"Đường huyết đói",c_peptide:"C-peptide",duration_years:"Số năm mắc bệnh"};
+function errorText(j) {
+  if (typeof j.detail === "string") return j.detail;
+  if (Array.isArray(j.detail)) return j.detail.map(d => {
+    const f = d.loc[d.loc.length - 1];
+    return `${FIELD_VI[typeof f === "number" ? "readings" : f] || f}: giá trị không hợp lệ.`;
+  }).join(" ");
+  return "Có lỗi xảy ra, vui lòng thử lại.";
+}
+
+async function analyze(ev) {
+  ev && ev.preventDefault();
+  const err = $("err"); err.hidden = true;
+  $("go").disabled = true; $("go").textContent = "Đang phân tích...";
+  try {
+    const r = await fetch("/analyze", {method: "POST", headers: {"content-type": "application/json"}, body: JSON.stringify(buildPayload())});
+    const j = await r.json();
+    if (!r.ok) throw new Error(errorText(j));
+    render(j);
+  } catch (e) {
+    err.textContent = e.message === "Failed to fetch" ? "Không kết nối được máy chủ." : e.message;
+    err.hidden = false;
+  } finally {
+    $("go").disabled = false; $("go").textContent = "Phân tích";
+  }
+}
+
+function glucoseState(g, fmin) {
+  if (g < 54) return ["Hạ đường huyết nặng", "bad"];
+  if (g < 70) return ["Hạ đường huyết", "bad"];
+  if (g >= 400) return ["Tăng đường huyết rất cao", "bad"];
+  if (g > 250) return ["Tăng đường huyết cao", "warn"];
+  if (g > 180) return ["Trên khoảng mục tiêu", "warn"];
+  if (fmin < 70) return ["Sắp hạ đường huyết", "warn"];
+  return ["Trong khoảng mục tiêu", "ok"];
+}
+
+function gauge(g) {
+  const lo = 40, hi = 300, pct = v => (Math.min(hi, Math.max(lo, v)) - lo) / (hi - lo) * 100;
+  const a = pct(70), b = pct(180), p = pct(g);
+  return el("div", {class: "gauge", role: "img", "aria-label": `Đường huyết hiện tại ${Math.round(g)} mg/dL trên thang 70 đến 180`},
+    el("div", {class: "marklbl", style: `left:${p}%`}, `hiện tại ${Math.round(g)}`),
+    el("div", {class: "bar"}, el("span", {style: `width:${a}%`}), el("span", {style: `width:${b - a}%`}), el("span", {style: `width:${100 - b}%`})),
+    el("div", {class: "mark", style: `left:${p}%`}),
+    el("div", {class: "tick", style: `left:${a}%`}, "70"), el("div", {class: "tick", style: `left:${b}%`}, "180"));
+}
+
+function chart(readings, forecast) {
+  const W = 760, H = 210, L = 36, R = 12, T = 12, B = 26;
+  const n = readings.length, m = forecast.minutes.length, tot = n + m - 1 || 1;
+  const all = [...readings, ...forecast.values, ...forecast.values_conservative, 70, 180];
+  const lo = Math.max(30, Math.min(...all) - 15), hi = Math.max(...all) + 15;
+  const x = i => L + i / tot * (W - L - R), y = v => T + (hi - v) / (hi - lo) * (H - T - B);
+  const s = svgEl("svg", {viewBox: `0 0 ${W} ${H}`, width: "100%", role: "img", "aria-label": `Đường huyết đã đo và dự báo 30 phút; thấp nhất dự báo ${Math.min(...forecast.values_conservative)} mg/dL`});
+  s.append(svgEl("rect", {x: L, y: y(180), width: W - L - R, height: y(70) - y(180), fill: "#dcf3e7", opacity: .6}));
+  for (const v of [70, 180]) {
+    s.append(svgEl("line", {x1: L, x2: W - R, y1: y(v), y2: y(v), stroke: "#a9c9b9", "stroke-dasharray": "3 3"}));
+    s.append(svgEl("text", {x: L - 6, y: y(v) + 4, "text-anchor": "end", "font-size": 11, fill: "#5f7178"}, String(v)));
+  }
+  const path = pts => pts.map((p, i) => `${i ? "L" : "M"}${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(" ");
+  const measured = readings.map((v, i) => [x(i), y(v)]);
+  const last = measured[n - 1];
+  s.append(svgEl("path", {d: path([last, ...forecast.values.map((v, i) => [x(n + i), y(v)])]), fill: "none", stroke: "#7c5cc4", "stroke-width": 2, "stroke-dasharray": "5 4"}));
+  s.append(svgEl("path", {d: path([last, ...forecast.values_conservative.map((v, i) => [x(n + i), y(v)])]), fill: "none", stroke: "#d98a1f", "stroke-width": 2, "stroke-dasharray": "2 3"}));
+  if (n > 1) s.append(svgEl("path", {d: path(measured), fill: "none", stroke: "#0f766e", "stroke-width": 2.5}));
+  s.append(svgEl("circle", {cx: last[0], cy: last[1], r: 4, fill: "#0f766e"}));
+  s.append(svgEl("text", {x: last[0], y: H - 8, "text-anchor": "middle", "font-size": 11, fill: "#5f7178"}, "bây giờ"));
+  s.append(svgEl("text", {x: W - R, y: H - 8, "text-anchor": "end", "font-size": 11, fill: "#5f7178"}, "+30 phút"));
+  return el("div", {class: "card"}, el("h2", null, "Đường huyết và dự báo 30 phút"),
+    el("div", {class: "legend", style: "margin-bottom:2px"},
+      el("span", null, el("i", {style: "background:#0f766e"}), "Đã đo"),
+      el("span", null, el("i", {style: "background:#7c5cc4"}), "Dự báo DL"),
+      el("span", null, el("i", {style: "background:#d98a1f"}), "Dự báo bảo thủ (mức thấp hơn)")), s);
+}
+
+function riskRow(label, p) {
+  return el("div", {class: "risk"}, el("span", null, label), el("span", {class: "t"}, el("b", {style: `width:${Math.min(100, p * 100)}%`})), el("span", null, `${(p * 100).toFixed(1)}%`));
+}
+
+function agentCard(key, r) {
+  const [title, color] = AGENT[key];
+  const c = el("div", {class: "card agent" + (key === "nutrition" || key === "medication" ? " wide" : "")},
+    el("h3", null, el("span", {class: "dot", style: `background:${color}`}), title), el("div", null, r.summary));
+  const d = r.details;
+  if (key === "glucose" && d.tir_pct !== null) {
+    c.append(el("table", null, el("thead", null, el("tr", null, ["TIR", "TBR", "TAR", "CV"].map(h => el("th", null, h)))),
+      el("tbody", null, el("tr", null, [d.tir_pct, d.tbr_pct, d.tar_pct, d.cv_pct].map(v => el("td", null, `${v}%`))))));
+  }
+  if (key === "medication" && d.correction !== null && (d.correction > 0 || d.meal > 0 || d.proposed !== null)) {
+    c.append(el("div", {class: "dose"},
+      el("div", null, el("b", null, `${d.correction} đv`), el("span", null, `Liều bù (RL đề xuất ${d.proposed ?? 0} đv)`)),
+      el("div", null, el("b", null, `${d.meal} đv`), el("span", null, "Liều bữa ăn")),
+      d.iob !== null ? el("div", null, el("b", null, `${d.iob} đv`), el("span", null, "Insulin còn hoạt động")) : null));
+    if (d.rules_fired.length) c.append(el("div", {class: "sub"}, "Rule đã can thiệp: " + d.rules_fired.join("; ")));
+  }
+  if (r.actions.length) c.append(el("ul", null, r.actions.map(a => el("li", null, a))));
+  if (key === "nutrition") {
+    const m = d.menu;
+    c.append(el("div", {class: "sub", style: "font-weight:600;color:var(--ink);margin-top:10px"}, "Thực đơn gợi ý"));
+    c.append(el("table", null, el("thead", null, el("tr", null, ["Món", "Khẩu phần", "Carb"].map(h => el("th", null, h)))),
+      el("tbody", null, m.items.map(i => el("tr", null, el("td", null, i.name), el("td", null, i.portion), el("td", null, `~${i.carb_g} g`))))));
+    if (m.snacks.length) c.append(el("div", {class: "sub"}, "Bữa phụ: " + m.snacks.map(s => `${s.name} (${s.portion}, ~${s.carb_g} g carb)`).join("; ")));
+  }
+  return c;
+}
+
+function render(j) {
+  const out = $("out"); out.textContent = "";
+  const g = j.results.glucose.details.current, fmin = Math.min(...j.forecast.values_conservative);
+  const [state, cls] = glucoseState(g, fmin);
+  const c = j.classification, comp = c.complications;
+  const maxRisk = Math.max(comp.retinopathy, comp.nephropathy, comp.neuropathy);
+  const compLevel = maxRisk < .15 ? "thấp" : maxRisk < .4 ? "trung bình" : "cao";
+  const emergency = j.plan.startsWith("KHẨN");
+  const left = el("div", null,
+    el("div", null, el("b", null, "Bệnh nhân"), el("span", {class: "tag" + (emergency ? " danger" : "")}, j.plan)),
+    el("div", {class: "big"}, String(Math.round(g)), el("small", null, "mg/dL")),
+    el("span", {class: "pill " + cls}, state),
+    gauge(g),
+    el("div", {class: "sub"}, "Kế hoạch: " + j.steps.map(s => AGENT[s][0]).join(" → ")));
+  const right = el("div", null,
+    el("div", {class: "mini"}, el("div", {class: "k"}, "Phân loại"), el("div", {class: "v"}, c.class_name), el("div", {class: "s"}, c.source)),
+    el("div", {class: "mini"}, el("div", {class: "k"}, "Nguy cơ mắc tiểu đường"), el("div", {class: "v"}, c.risk_level),
+      el("div", {class: "s"}, c.prob >= c.threshold ? "Mạng học sâu: vượt ngưỡng sàng lọc" : "Mạng học sâu: chưa vượt ngưỡng sàng lọc")),
+    el("div", {class: "mini"}, el("div", {class: "v", style: "font-size:13px"}, `Nguy cơ biến chứng: ${compLevel}`), el("div", {class: "s"}, comp.label),
+      riskRow("Võng mạc", comp.retinopathy), riskRow("Thận", comp.nephropathy), riskRow("Thần kinh", comp.neuropathy)));
+  out.append(el("div", {class: "card hero"}, left, right));
+  if (c.type_low_confidence) out.append(el("div", {class: "alert warning", style: "margin:0"}, "Độ tin cậy phân type thấp vì chưa có kháng thể/C-peptide: cần xét nghiệm để xác nhận."));
+
+  const alerts = el("div", {class: "card"}, el("h2", null, "Cảnh báo"));
+  if (!j.alerts.length) alerts.append(el("div", {class: "sub"}, "Không có cảnh báo."));
+  j.alerts.forEach(a => alerts.append(el("div", {class: "alert " + a.level}, el("b", null, `${LEVEL[a.level]}: `), a.message, el("small", null, "Agent " + a.agent))));
+  out.append(alerts);
+
+  if (j.audit_findings.length) {
+    out.append(el("div", {class: "card", style: "border-color:#f6c9c4"}, el("h2", null, "Auditor an toàn đã can thiệp"),
+      el("ul", null, j.audit_findings.map(f => el("li", null, f)))));
+  }
+  if (j.synthesis) out.append(el("div", {class: "card"}, el("h2", null, "Tổng hợp"), el("div", {style: "white-space:pre-wrap"}, j.synthesis)));
+  else if (j.synthesis_note) out.append(el("div", {class: "sub", style: "margin:0 4px"}, j.synthesis_note));
+
+  const payload = buildPayload();
+  const mgdl = payload.unit === "mmol/L" ? payload.readings.map(x => x * 18.016) : payload.readings;
+  out.append(chart(mgdl, j.forecast));
+  out.append(el("div", {class: "agents"}, j.steps.map(s => agentCard(s, j.results[s]))));
+  if (j.sources.length) {
+    out.append(el("div", {class: "card"}, el("h2", null, `Nguồn tham chiếu (${j.sources.length})`), el("ul", {style: "margin:6px 0 0;padding-left:18px;font-size:13px"}, j.sources.map(s => el("li", null, s)))));
+  }
+  out.append(el("div", {class: "sub", style: "text-align:center"}, j.disclaimer));
+}
+
+/* Ca mẫu */
+let SC = {};
+function fillScenario(s) {
+  const p = s.profile;
+  for (const k of ["age","height_cm","weight_kg","hba1c","egfr","isf","icr","duration_years"]) $(k).value = p[k];
+  for (const k of ["c_peptide","fasting_glucose"]) $(k).value = p[k] ?? "";
+  for (const k of ["hypertension","on_insulin","heart_disease","heart_failure","pregnant","vegetarian","pancreatitis_history","mtc_men2_history"]) $(k).checked = !!p[k];
+  document.querySelector(`[name=sex][value=${p.sex === "F" ? "F" : "M"}]`).checked = true;
+  document.querySelector(`[name=dtype][value="${p.diabetes_type_known || ""}"]`).checked = true;
+  $("autoantibody").value = p.autoantibody === null ? "" : String(p.autoantibody);
+  $("medications").value = p.medications.join(", "); $("allergies").value = p.allergies.join(", ");
+  $("unit").value = "mg/dL"; $("unitlabel").textContent = "mg/dL";
+  $("current").value = s.readings[s.readings.length - 1];
+  $("series").value = s.readings.length > 1 ? s.readings.join(", ") : "";
+  for (const k of ["planned_carbs","minutes_since_insulin","last_insulin_units","reading_age_min"]) $(k).value = s[k] ?? "";
+}
+
+/* Hỏi đáp */
+function greet() {
+  $("msgs").textContent = "";
+  $("msgs").append(el("div", {class: "bot"}, "Xin chào! Mình trả lời câu hỏi về tiểu đường dựa trên ADA, WHO, Bộ Y tế và luôn kèm nguồn trích dẫn. Bạn muốn hỏi gì?"));
+}
+function botAnswer(a) {
+  const box = el("div", {class: "bot"});
+  if (a.mode === "llm") box.append(el("div", {style: "white-space:pre-wrap"}, a.answer));
+  else if (a.evidence.length) {
+    box.append(el("span", {class: "mode"}, "Trích nguyên văn từ cơ sở tri thức" + (LLM_ON ? "" : " (chưa bật LLM)")));
+    a.evidence.forEach((e, i) => box.append(el("div", {class: "sec"}, el("b", null, el("span", {class: "num"}, String(i + 1)), e.title), e.text)));
+  } else box.append(a.answer);
+  if (a.note) box.append(el("div", {class: "sub"}, a.note));
+  if (a.evidence.length) box.append(el("details", null, el("summary", null, `Nguồn (${a.evidence.length})`),
+    el("div", null, a.evidence.map(e => el("div", null, `${e.source}: ${e.title}`)))));
+  return box;
+}
+async function ask(ev) {
+  ev.preventDefault();
+  const q = $("q").value.trim(); if (!q) return;
+  $("q").value = "";
+  const m = $("msgs");
+  m.append(el("div", {class: "me"}, q));
+  const wait = el("div", {class: "bot"}, "Đang tìm trong cơ sở tri thức...");
+  m.append(wait); m.scrollTop = m.scrollHeight;
+  try {
+    const r = await fetch("/ask", {method: "POST", headers: {"content-type": "application/json"}, body: JSON.stringify({question: q})});
+    if (!r.ok) throw new Error();
+    wait.replaceWith(botAnswer(await r.json()));
+  } catch { wait.textContent = "Không kết nối được máy chủ, vui lòng thử lại."; }
+  m.scrollTop = m.scrollHeight;
+}
+
+/* Đồ thị: thuốc bên trái, điều kiện lâm sàng bên phải; thay thế/tương tác là cung bên trái */
+const EDGE = {contraindicated: ["#b42318", "Chống chỉ định"], caution: ["#d98a1f", "Thận trọng"], interacts: ["#1d5fa8", "Tương tác"], substitute: ["#0f766e", "Thay thế"]};
+let graphDone = false;
+async function loadGraph() {
+  if (graphDone) return;
+  const r = await fetch("/graph"); const g = await r.json(); graphDone = true;
+  $("gmeta").textContent = `${g.counts.recommendations} khuyến nghị, ${g.counts.foods} thực phẩm, ${g.counts.drugs} thuốc. ${g.meta.note}`;
+  const drugs = g.nodes.filter(n => n.type === "drug"), conds = g.nodes.filter(n => n.type === "condition");
+  const rows = Math.max(drugs.length, conds.length), H = rows * 44 + 20, W = 860, xD = 300, xC = 620, pos = {};
+  drugs.forEach((n, i) => pos[n.id] = [xD, 30 + i * (H - 40) / Math.max(drugs.length - 1, 1) * .96]);
+  conds.forEach((n, i) => pos[n.id] = [xC, 30 + i * (H - 40) / Math.max(conds.length - 1, 1) * .96]);
+  const s = svgEl("svg", {viewBox: `0 0 ${W} ${H}`, width: "100%", style: "min-width:680px"});
+  const lines = [];
+  for (const e of g.edges) {
+    const [x1, y1] = pos[e.from], [x2, y2] = pos[e.to];
+    const d = x1 === x2 ? `M${x1 - 6} ${y1} C ${x1 - 70 - Math.abs(y2 - y1) * .35} ${y1}, ${x2 - 70 - Math.abs(y2 - y1) * .35} ${y2}, ${x2 - 6} ${y2}` : `M${x1 + 6} ${y1} C ${x1 + 130} ${y1}, ${x2 - 130} ${y2}, ${x2 - 6} ${y2}`;
+    const p = svgEl("path", {d, fill: "none", stroke: EDGE[e.kind][0], "stroke-width": 1.8, opacity: .75, "stroke-dasharray": e.kind === "substitute" ? "5 4" : "none"});
+    p.append(svgEl("title", null, `${e.from} → ${e.to}: ${e.note}`));
+    p.addEventListener("mouseenter", () => { $("gnote").textContent = `${EDGE[e.kind][1]}: ${e.from} → ${e.to}. ${e.note}`; p.setAttribute("stroke-width", 3.5); });
+    p.addEventListener("mouseleave", () => p.setAttribute("stroke-width", 1.8));
+    s.append(p); lines.push(p);
+  }
+  for (const n of g.nodes) {
+    const [x, y] = pos[n.id], drug = n.type === "drug";
+    s.append(svgEl("circle", {cx: x, cy: y, r: 7, fill: drug ? "#0f766e" : "#fff", stroke: drug ? "#0f766e" : "#5f7178", "stroke-width": 2}));
+    s.append(svgEl("text", {x: drug ? x + 12 : x + 13, y: drug ? y - 10 : y + 4, "font-size": 13, fill: "#14272e", "text-anchor": drug ? "middle" : "start", stroke: "#fff", "stroke-width": 3, "paint-order": "stroke"}, n.label));
+  }
+  $("graph").append(s);
+}
+
+/* Khởi tạo */
+function setTab(a) {
+  $("tab-a").setAttribute("aria-selected", a); $("tab-g").setAttribute("aria-selected", !a);
+  $("view-a").hidden = !a; $("view-g").hidden = a;
+  if (!a) loadGraph().catch(() => { $("gmeta").textContent = "Không tải được đồ thị."; });
+}
+$("tab-a").onclick = () => setTab(true);
+$("tab-g").onclick = () => setTab(false);
+$("form").addEventListener("submit", analyze);
+$("unit").onchange = () => { $("unitlabel").textContent = $("unit").value; };
+$("scenario").onchange = () => { const s = SC[$("scenario").value]; if (s) { fillScenario(s); analyze(); } };
+$("fab").onclick = () => { $("chat").hidden = false; $("fab").hidden = true; $("q").focus(); };
+$("close").onclick = () => { $("chat").hidden = true; $("fab").hidden = false; };
+$("reset").onclick = greet;
+$("askf").addEventListener("submit", ask);
+greet();
+let LLM_ON = false;
+fetch("/health").then(r => r.json()).then(h => {
+  LLM_ON = h.llm;
+  const chip = (k, v) => el("span", {class: "chip"}, k + " ", el("b", null, v));
+  $("status").append(chip("Tri thức", h.kb), chip("Học sâu", h.dl), chip("LLM", h.llm ? "bật" : "tắt"));
+});
+fetch("/scenarios").then(r => r.json()).then(s => {
+  SC = s;
+  for (const [k, v] of Object.entries(s)) $("scenario").append(el("option", {value: k}, `Ca ${k}: ${v.title}`));
+});
+</script>
+</body>
+</html>

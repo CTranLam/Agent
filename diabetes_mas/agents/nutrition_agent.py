@@ -79,7 +79,7 @@ class NutritionAgent(BaseAgent):
         actions.append("Tránh nước ngọt có đường, trà sữa, nước ép đóng chai (trừ khi xử trí hạ đường huyết).")
         if p.hypertension or p.heart_failure or p.egfr < 60:
             actions.append("Hạn chế muối (<5 g/ngày): giảm nước chấm, đồ muối, đồ chế biến sẵn.")
-        if p.on_insulin:
+        if p.on_insulin and ctx.planned_carbs is None:
             actions.append("Đang dùng insulin: hãy nhập lượng carb thực tế định ăn để có liều bữa ăn tham khảo.")
 
         details = {"budget_g": budget, **info, "meal": meal,
