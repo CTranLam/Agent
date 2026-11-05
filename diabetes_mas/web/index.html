@@ -181,12 +181,12 @@ svg text{font-family:inherit}
         <label class="f">Số đo cách đây<span class="inp"><input type="number" id="reading_age_min" min="0"><i>phút</i></span></label>
       </div>
       <div class="row">
-        <label class="f">Lần tiêm trước<span class="inp"><input type="number" id="minutes_since_insulin" min="0"><i>phút</i></span></label>
+        <label class="f">Lần tiêm trước (không tiêm trong 3 giờ: nhập 180)<span class="inp"><input type="number" id="minutes_since_insulin" min="0"><i>phút</i></span></label>
         <label class="f">Liều lần trước<span class="inp"><input type="number" id="last_insulin_units" min="0" step="0.5"><i>đv</i></span></label>
       </div>
       <div class="row">
-        <label class="f">ISF (mg/dL/đv)<input type="number" id="isf" class="inp" value="40" min="5" max="200"></label>
-        <label class="f">ICR (g/đv)<input type="number" id="icr" class="inp" value="12" min="1" max="100"></label>
+        <label class="f">ISF (mg/dL/đv)<input type="number" id="isf" class="inp" min="5" max="200" placeholder="Bắt buộc để có liều bù"></label>
+        <label class="f">ICR (g/đv)<input type="number" id="icr" class="inp" min="1" max="100" placeholder="Bắt buộc để có liều bữa ăn"></label>
       </div>
       <div class="row">
         <label class="f">eGFR<input type="number" id="egfr" class="inp" value="90" min="0" max="200"></label>
@@ -237,7 +237,7 @@ svg text{font-family:inherit}
 <aside class="chat" id="chat" hidden aria-label="Trợ lý tiểu đường">
   <header>
     <span class="logo" aria-hidden="true">💬</span>
-    <div><div class="t">Trợ lý tiểu đường</div><div class="s">Trả lời từ ADA, WHO, Bộ Y tế</div></div>
+    <div><div class="t">Trợ lý tiểu đường</div><div class="s">Tóm tắt từ ADA, WHO, Bộ Y tế, chưa thẩm định</div></div>
     <button class="ghost" id="reset" type="button">Làm mới</button>
     <button class="icon" id="close" type="button" aria-label="Thu nhỏ">⌄</button>
   </header>
@@ -273,15 +273,8 @@ const LEVEL = {critical: "Khẩn", warning: "Cảnh báo", info: "Lưu ý"};
 function buildPayload() {
   const unit = $("unit").value;
   const series = $("series").value.trim();
-  let readings;
-  if (series) {
-    readings = series.split(/[\s,;]+/).filter(Boolean).map(Number);
-    if (readings.some(Number.isNaN)) throw new Error("Chuỗi đường huyết chỉ được chứa số, cách nhau bằng dấu phẩy.");
-  } else {
-    const c = num("current");
-    if (c === null) throw new Error("Hãy nhập đường huyết hiện tại.");
-    readings = [c];
-  }
+  const source = series ? {series_text: series} : {readings: [num("current")]};
+  if (!series && source.readings[0] === null) throw new Error("Hãy nhập đường huyết hiện tại.");
   const profile = {
     age: num("age"), sex: document.querySelector("[name=sex]:checked").value, weight_kg: num("weight_kg"), height_cm: num("height_cm"),
     hba1c: num("hba1c"), egfr: num("egfr"), isf: num("isf"), icr: num("icr"), duration_years: num("duration_years") ?? 0,
@@ -291,8 +284,8 @@ function buildPayload() {
     medications: list("medications"), allergies: list("allergies"),
   };
   for (const k of ["hypertension","on_insulin","heart_disease","heart_failure","pregnant","vegetarian","pancreatitis_history","mtc_men2_history"]) profile[k] = $(k).checked;
-  for (const k of ["age","weight_kg","height_cm","hba1c","egfr","isf","icr"]) if (profile[k] === null) throw new Error("Hãy điền đủ các ô bắt buộc (tuổi, chiều cao, cân nặng, HbA1c, eGFR, ISF, ICR).");
-  return {profile, readings, unit, planned_carbs: num("planned_carbs"), minutes_since_insulin: num("minutes_since_insulin"),
+  for (const k of ["age","weight_kg","height_cm","hba1c","egfr"]) if (profile[k] === null) throw new Error("Hãy điền đủ các ô bắt buộc (tuổi, chiều cao, cân nặng, HbA1c, eGFR).");
+  return {profile, ...source, unit, planned_carbs: num("planned_carbs"), minutes_since_insulin: num("minutes_since_insulin"),
           last_insulin_units: num("last_insulin_units"), reading_age_min: num("reading_age_min"), meal_type: $("meal_type").value};
 }
 
@@ -384,10 +377,10 @@ function agentCard(key, r) {
     c.append(el("table", null, el("thead", null, el("tr", null, ["TIR", "TBR", "TAR", "CV"].map(h => el("th", null, h)))),
       el("tbody", null, el("tr", null, [d.tir_pct, d.tbr_pct, d.tar_pct, d.cv_pct].map(v => el("td", null, `${v}%`))))));
   }
-  if (key === "medication" && d.correction !== null && (d.correction > 0 || d.meal > 0 || d.proposed !== null)) {
+  if (key === "medication" && d.correction !== null && (d.meal > 0 || d.proposed !== null || d.blocked_reason)) {
     c.append(el("div", {class: "dose"},
-      el("div", null, el("b", null, `${d.correction} đv`), el("span", null, `Liều bù (RL đề xuất ${d.proposed ?? 0} đv)`)),
-      el("div", null, el("b", null, `${d.meal} đv`), el("span", null, "Liều bữa ăn")),
+      d.blocked_reason ? null : el("div", null, el("b", null, `${d.correction} đv`), el("span", null, `Liều bù (RL đề xuất ${d.proposed ?? 0} đv)`)),
+      d.meal > 0 || !d.blocked_reason ? el("div", null, el("b", null, `${d.meal} đv`), el("span", null, "Liều bữa ăn")) : null,
       d.iob !== null ? el("div", null, el("b", null, `${d.iob} đv`), el("span", null, "Insulin còn hoạt động")) : null));
     if (d.rules_fired.length) c.append(el("div", {class: "sub"}, "Rule đã can thiệp: " + d.rules_fired.join("; ")));
   }
@@ -437,12 +430,10 @@ function render(j) {
   if (j.synthesis) out.append(el("div", {class: "card"}, el("h2", null, "Tổng hợp"), el("div", {style: "white-space:pre-wrap"}, j.synthesis)));
   else if (j.synthesis_note) out.append(el("div", {class: "sub", style: "margin:0 4px"}, j.synthesis_note));
 
-  const payload = buildPayload();
-  const mgdl = payload.unit === "mmol/L" ? payload.readings.map(x => x * 18.016) : payload.readings;
-  out.append(chart(mgdl, j.forecast));
+  out.append(chart(j.readings, j.forecast));
   out.append(el("div", {class: "agents"}, j.steps.map(s => agentCard(s, j.results[s]))));
   if (j.sources.length) {
-    out.append(el("div", {class: "card"}, el("h2", null, `Nguồn tham chiếu (${j.sources.length})`), el("ul", {style: "margin:6px 0 0;padding-left:18px;font-size:13px"}, j.sources.map(s => el("li", null, s)))));
+    out.append(el("div", {class: "card"}, el("h2", null, `Nguồn tham chiếu (${j.sources.length})`), el("p", {class: "hint"}, "Bản tóm tắt giáo dục dựa trên các nguồn này, chưa thẩm định bởi bác sĩ/dược sĩ."), el("ul", {style: "margin:6px 0 0;padding-left:18px;font-size:13px"}, j.sources.map(s => el("li", null, s)))));
   }
   out.append(el("div", {class: "sub", style: "text-align:center"}, j.disclaimer));
 }
@@ -451,7 +442,7 @@ function render(j) {
 let SC = {};
 function fillScenario(s) {
   const p = s.profile;
-  for (const k of ["age","height_cm","weight_kg","hba1c","egfr","isf","icr","duration_years"]) $(k).value = p[k];
+  for (const k of ["age","height_cm","weight_kg","hba1c","egfr","isf","icr","duration_years"]) $(k).value = p[k] ?? "";
   for (const k of ["c_peptide","fasting_glucose"]) $(k).value = p[k] ?? "";
   for (const k of ["hypertension","on_insulin","heart_disease","heart_failure","pregnant","vegetarian","pancreatitis_history","mtc_men2_history"]) $(k).checked = !!p[k];
   document.querySelector(`[name=sex][value=${p.sex === "F" ? "F" : "M"}]`).checked = true;
@@ -467,13 +458,13 @@ function fillScenario(s) {
 /* Hỏi đáp */
 function greet() {
   $("msgs").textContent = "";
-  $("msgs").append(el("div", {class: "bot"}, "Xin chào! Mình trả lời câu hỏi về tiểu đường dựa trên ADA, WHO, Bộ Y tế và luôn kèm nguồn trích dẫn. Bạn muốn hỏi gì?"));
+  $("msgs").append(el("div", {class: "bot"}, "Xin chào! Mình trả lời câu hỏi về tiểu đường dựa trên bản tóm tắt từ ADA, WHO, Bộ Y tế (chưa thẩm định) và luôn kèm nguồn. Bạn muốn hỏi gì?"));
 }
 function botAnswer(a) {
   const box = el("div", {class: "bot"});
   if (a.mode === "llm") box.append(el("div", {style: "white-space:pre-wrap"}, a.answer));
   else if (a.evidence.length) {
-    box.append(el("span", {class: "mode"}, "Trích nguyên văn từ cơ sở tri thức" + (LLM_ON ? "" : " (chưa bật LLM)")));
+    box.append(el("span", {class: "mode"}, "Trích từ bản tóm tắt trong cơ sở tri thức" + (LLM_ON ? "" : " (chưa bật LLM)")));
     a.evidence.forEach((e, i) => box.append(el("div", {class: "sec"}, el("b", null, el("span", {class: "num"}, String(i + 1)), e.title), e.text)));
   } else box.append(a.answer);
   if (a.note) box.append(el("div", {class: "sub"}, a.note));
@@ -536,6 +527,7 @@ function setTab(a) {
 $("tab-a").onclick = () => setTab(true);
 $("tab-g").onclick = () => setTab(false);
 $("form").addEventListener("submit", analyze);
+$("current").addEventListener("input", () => { $("series").value = ""; });
 $("unit").onchange = () => { $("unitlabel").textContent = $("unit").value; };
 $("scenario").onchange = () => { const s = SC[$("scenario").value]; if (s) { fillScenario(s); analyze(); } };
 $("fab").onclick = () => { $("chat").hidden = false; $("fab").hidden = true; $("q").focus(); };

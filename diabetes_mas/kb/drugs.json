@@ -1,30 +1,248 @@
 {
- "drugs":[
-  {"name":"metformin","aliases":["glucophage"],"contraindications":["egfr_lt_30"],"cautions":["egfr_lt_45"],"not_for_types":["T1"],"notes":{"egfr_lt_30":"chống chỉ định khi eGFR <30","egfr_lt_45":"cân nhắc giảm liều, không khởi trị khi eGFR 30-45"}},
-  {"name":"gliclazide","aliases":["gliclazid","diamicron"],"contraindications":[],"cautions":["egfr_lt_30","age_ge_75"],"not_for_types":["T1"],"notes":{"egfr_lt_30":"suy thận làm tăng nguy cơ hạ đường huyết","age_ge_75":"người cao tuổi dễ hạ đường huyết"}},
-  {"name":"pioglitazone","aliases":["actos"],"contraindications":["heart_failure"],"cautions":["pregnancy"],"not_for_types":["T1"],"notes":{"heart_failure":"giữ nước, làm nặng suy tim","pregnancy":"không khuyến cáo trong thai kỳ"}},
-  {"name":"sitagliptin","aliases":["januvia"],"contraindications":[],"cautions":["egfr_lt_45","pancreatitis_history"],"not_for_types":["T1"],"notes":{"egfr_lt_45":"cần giảm liều theo eGFR","pancreatitis_history":"thận trọng khi có tiền sử viêm tụy"}},
-  {"name":"linagliptin","aliases":["trajenta"],"contraindications":[],"cautions":["pancreatitis_history"],"not_for_types":["T1"],"notes":{"pancreatitis_history":"thận trọng khi có tiền sử viêm tụy"}},
-  {"name":"empagliflozin","aliases":["jardiance"],"contraindications":["type1_dka"],"cautions":["egfr_lt_20"],"not_for_types":[],"notes":{"type1_dka":"nguy cơ nhiễm toan ceton ở type 1","egfr_lt_20":"chưa đủ dữ liệu khi eGFR rất thấp, cần bác sĩ đánh giá"}},
-  {"name":"liraglutide","aliases":["victoza"],"contraindications":["mtc_men2"],"cautions":["pancreatitis_history","pregnancy"],"not_for_types":["T1"],"notes":{"mtc_men2":"chống chỉ định khi có tiền sử ung thư giáp thể tủy/MEN2","pancreatitis_history":"thận trọng khi có tiền sử viêm tụy","pregnancy":"không khuyến cáo trong thai kỳ"}},
-  {"name":"insulin aspart","aliases":["novorapid","insulin nhanh"],"contraindications":[],"cautions":[],"not_for_types":[],"notes":{}},
-  {"name":"insulin glargine","aliases":["lantus","insulin nền"],"contraindications":[],"cautions":[],"not_for_types":[],"notes":{}}
+ "drugs": [
+  {
+   "name": "metformin",
+   "aliases": [
+    "glucophage"
+   ],
+   "contraindications": [
+    "egfr_lt_30"
+   ],
+   "cautions": [
+    "egfr_lt_45",
+    "pregnancy"
+   ],
+   "not_for_types": [
+    "T1"
+   ],
+   "notes": {
+    "egfr_lt_30": "chống chỉ định khi eGFR <30",
+    "egfr_lt_45": "cân nhắc giảm liều, không khởi trị khi eGFR 30-45",
+    "pregnancy": "không khuyến cáo trong thai kỳ, thường chuyển sang insulin: hỏi bác sĩ sản khoa"
+   }
+  },
+  {
+   "name": "gliclazide",
+   "aliases": [
+    "gliclazid",
+    "diamicron"
+   ],
+   "contraindications": [
+    "egfr_lt_30"
+   ],
+   "cautions": [
+    "age_ge_75",
+    "pregnancy"
+   ],
+   "not_for_types": [
+    "T1"
+   ],
+   "notes": {
+    "egfr_lt_30": "không dùng khi suy thận nặng, tăng nguy cơ hạ đường huyết kéo dài",
+    "age_ge_75": "người cao tuổi dễ hạ đường huyết",
+    "pregnancy": "không khuyến cáo trong thai kỳ, thường chuyển sang insulin: hỏi bác sĩ sản khoa"
+   }
+  },
+  {
+   "name": "pioglitazone",
+   "aliases": [
+    "actos"
+   ],
+   "contraindications": [
+    "heart_failure"
+   ],
+   "cautions": [
+    "pregnancy"
+   ],
+   "not_for_types": [
+    "T1"
+   ],
+   "notes": {
+    "heart_failure": "giữ nước, làm nặng suy tim",
+    "pregnancy": "không khuyến cáo trong thai kỳ"
+   }
+  },
+  {
+   "name": "sitagliptin",
+   "aliases": [
+    "januvia"
+   ],
+   "contraindications": [],
+   "cautions": [
+    "egfr_lt_45",
+    "pancreatitis_history",
+    "pregnancy"
+   ],
+   "not_for_types": [
+    "T1"
+   ],
+   "notes": {
+    "egfr_lt_45": "cần giảm liều theo eGFR",
+    "pancreatitis_history": "thận trọng khi có tiền sử viêm tụy",
+    "pregnancy": "không khuyến cáo trong thai kỳ, thường chuyển sang insulin: hỏi bác sĩ sản khoa"
+   }
+  },
+  {
+   "name": "linagliptin",
+   "aliases": [
+    "trajenta"
+   ],
+   "contraindications": [],
+   "cautions": [
+    "pancreatitis_history",
+    "pregnancy"
+   ],
+   "not_for_types": [
+    "T1"
+   ],
+   "notes": {
+    "pancreatitis_history": "thận trọng khi có tiền sử viêm tụy",
+    "pregnancy": "không khuyến cáo trong thai kỳ, thường chuyển sang insulin: hỏi bác sĩ sản khoa"
+   }
+  },
+  {
+   "name": "empagliflozin",
+   "aliases": [
+    "jardiance"
+   ],
+   "contraindications": [
+    "type1_dka"
+   ],
+   "cautions": [
+    "egfr_lt_20",
+    "pregnancy"
+   ],
+   "not_for_types": [],
+   "notes": {
+    "type1_dka": "nguy cơ nhiễm toan ceton ở type 1",
+    "egfr_lt_20": "chưa đủ dữ liệu khi eGFR rất thấp, cần bác sĩ đánh giá",
+    "pregnancy": "không khuyến cáo trong thai kỳ, thường chuyển sang insulin: hỏi bác sĩ sản khoa"
+   }
+  },
+  {
+   "name": "liraglutide",
+   "aliases": [
+    "victoza"
+   ],
+   "contraindications": [
+    "mtc_men2"
+   ],
+   "cautions": [
+    "pancreatitis_history",
+    "pregnancy"
+   ],
+   "not_for_types": [
+    "T1"
+   ],
+   "notes": {
+    "mtc_men2": "chống chỉ định khi có tiền sử ung thư giáp thể tủy/MEN2",
+    "pancreatitis_history": "thận trọng khi có tiền sử viêm tụy",
+    "pregnancy": "không khuyến cáo trong thai kỳ"
+   }
+  },
+  {
+   "name": "insulin aspart",
+   "aliases": [
+    "novorapid",
+    "insulin nhanh"
+   ],
+   "contraindications": [],
+   "cautions": [],
+   "not_for_types": [],
+   "notes": {}
+  },
+  {
+   "name": "insulin glargine",
+   "aliases": [
+    "lantus",
+    "insulin nền"
+   ],
+   "contraindications": [],
+   "cautions": [],
+   "not_for_types": [],
+   "notes": {}
+  }
  ],
- "interactions":[
-  {"a":"gliclazide","b":"insulin aspart","severity":"warning","message":"Gliclazide cùng insulin làm tăng nguy cơ hạ đường huyết."},
-  {"a":"gliclazide","b":"insulin glargine","severity":"warning","message":"Gliclazide cùng insulin làm tăng nguy cơ hạ đường huyết."},
-  {"a":"gliclazide","b":"liraglutide","severity":"warning","message":"Gliclazide cùng liraglutide làm tăng nguy cơ hạ đường huyết."},
-  {"a":"sitagliptin","b":"liraglutide","severity":"warning","message":"Sitagliptin và liraglutide cùng tác động lên trục incretin, thường không phối hợp."},
-  {"a":"linagliptin","b":"liraglutide","severity":"warning","message":"Linagliptin và liraglutide cùng tác động lên trục incretin, thường không phối hợp."},
-  {"a":"pioglitazone","b":"insulin aspart","severity":"warning","message":"Pioglitazone cùng insulin làm tăng nguy cơ giữ nước, phù."},
-  {"a":"pioglitazone","b":"insulin glargine","severity":"warning","message":"Pioglitazone cùng insulin làm tăng nguy cơ giữ nước, phù."}
+ "interactions": [
+  {
+   "a": "gliclazide",
+   "b": "insulin aspart",
+   "severity": "warning",
+   "message": "Gliclazide cùng insulin làm tăng nguy cơ hạ đường huyết."
+  },
+  {
+   "a": "gliclazide",
+   "b": "insulin glargine",
+   "severity": "warning",
+   "message": "Gliclazide cùng insulin làm tăng nguy cơ hạ đường huyết."
+  },
+  {
+   "a": "gliclazide",
+   "b": "liraglutide",
+   "severity": "warning",
+   "message": "Gliclazide cùng liraglutide làm tăng nguy cơ hạ đường huyết."
+  },
+  {
+   "a": "sitagliptin",
+   "b": "liraglutide",
+   "severity": "warning",
+   "message": "Sitagliptin và liraglutide cùng tác động lên trục incretin, thường không phối hợp."
+  },
+  {
+   "a": "linagliptin",
+   "b": "liraglutide",
+   "severity": "warning",
+   "message": "Linagliptin và liraglutide cùng tác động lên trục incretin, thường không phối hợp."
+  },
+  {
+   "a": "pioglitazone",
+   "b": "insulin aspart",
+   "severity": "warning",
+   "message": "Pioglitazone cùng insulin làm tăng nguy cơ giữ nước, phù."
+  },
+  {
+   "a": "pioglitazone",
+   "b": "insulin glargine",
+   "severity": "warning",
+   "message": "Pioglitazone cùng insulin làm tăng nguy cơ giữ nước, phù."
+  }
  ],
- "substitutes":[
-  {"drug":"pioglitazone","condition":"heart_failure","alternative":"empagliflozin","why":"có lợi trên suy tim"},
-  {"drug":"pioglitazone","condition":"heart_failure","alternative":"sitagliptin","why":"trung tính trên suy tim"},
-  {"drug":"metformin","condition":"egfr_lt_30","alternative":"linagliptin","why":"không cần chỉnh liều theo thận"},
-  {"drug":"gliclazide","condition":"egfr_lt_30","alternative":"linagliptin","why":"ít gây hạ đường huyết, không cần chỉnh liều theo thận"},
-  {"drug":"gliclazide","condition":"age_ge_75","alternative":"linagliptin","why":"ít gây hạ đường huyết"},
-  {"drug":"liraglutide","condition":"mtc_men2","alternative":"empagliflozin","why":"khác cơ chế"}
+ "substitutes": [
+  {
+   "drug": "pioglitazone",
+   "condition": "heart_failure",
+   "alternative": "empagliflozin",
+   "why": "có lợi trên suy tim"
+  },
+  {
+   "drug": "pioglitazone",
+   "condition": "heart_failure",
+   "alternative": "sitagliptin",
+   "why": "trung tính trên suy tim"
+  },
+  {
+   "drug": "metformin",
+   "condition": "egfr_lt_30",
+   "alternative": "linagliptin",
+   "why": "không cần chỉnh liều theo thận"
+  },
+  {
+   "drug": "gliclazide",
+   "condition": "egfr_lt_30",
+   "alternative": "linagliptin",
+   "why": "ít gây hạ đường huyết, không cần chỉnh liều theo thận"
+  },
+  {
+   "drug": "gliclazide",
+   "condition": "age_ge_75",
+   "alternative": "linagliptin",
+   "why": "ít gây hạ đường huyết"
+  },
+  {
+   "drug": "liraglutide",
+   "condition": "mtc_men2",
+   "alternative": "empagliflozin",
+   "why": "khác cơ chế"
+  }
  ]
 }

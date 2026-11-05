@@ -58,6 +58,15 @@ def apply_safety(profile: PatientProfile, glucose: float, forecast_min: float, p
     if not d.blocked and (n_readings is None or n_readings < C.MIN_READINGS_FOR_DOSE):
         block("R0b: quá ít số đo -> chưa biết xu hướng", "info",
               f"Cần ít nhất {C.MIN_READINGS_FOR_DOSE} số đo liên tiếp để cân nhắc liều bù.")
+    if not d.blocked and profile.age < C.MIN_DOSE_AGE:
+        block("R0c: dưới 18 tuổi -> không đề xuất liều", "warning",
+              "Người dưới 18 tuổi: liều do bác sĩ nhi khoa nội tiết quyết định, hệ thống không đề xuất liều.")
+    if not d.blocked and profile.isf is None:
+        block("R0d: chưa có ISF -> không đề xuất liều bù", "info",
+              "Chưa có hệ số nhạy insulin (ISF) do bác sĩ đặt: nhập ở mục Nâng cao để có liều bù tham khảo.")
+    if not d.blocked and proposed > 0 and minutes_since_insulin is None:
+        block("R5: chưa biết lần tiêm gần nhất -> chặn", "warning",
+              "Chưa biết lần tiêm insulin gần nhất: nhập số phút ở mục Nâng cao (không tiêm trong 3 giờ qua thì nhập 180).")
 
     if not d.blocked and proposed > 0 and minutes_since_insulin is not None \
             and minutes_since_insulin < C.INSULIN_ACTION_MIN:
@@ -87,6 +96,9 @@ def check_meal_bolus(profile: PatientProfile, glucose: float, forecast_min: floa
     notes: list[str] = []
     if not profile.on_insulin:
         return 0.0, notes
+    if profile.age < C.MIN_DOSE_AGE:
+        notes.append("Chưa tính liều bữa ăn: người dưới 18 tuổi do bác sĩ nhi khoa nội tiết quyết định.")
+        return 0.0, notes
     if carbs is None:
         notes.append("Chưa tính liều bữa ăn: hãy nhập lượng carb dự định ăn (g) để có liều tham khảo.")
         return 0.0, notes
@@ -95,6 +107,9 @@ def check_meal_bolus(profile: PatientProfile, glucose: float, forecast_min: floa
         return 0.0, notes
     if reading_age_min is not None and reading_age_min > C.READING_STALE_MIN:
         notes.append("Chưa tính liều bữa ăn: số đo đã cũ, hãy đo lại.")
+        return 0.0, notes
+    if profile.icr is None:
+        notes.append("Chưa tính liều bữa ăn: chưa có tỷ lệ ICR do bác sĩ đặt, nhập ở mục Nâng cao.")
         return 0.0, notes
     dose = floor_half(max(carbs, 0.0) / max(profile.icr, 1.0))
     if dose > C.MAX_MEAL_BOLUS:

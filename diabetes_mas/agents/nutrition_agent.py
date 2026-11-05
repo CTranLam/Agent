@@ -5,12 +5,13 @@ import zlib
 from .. import config as C
 from ..kb.store import fold
 from ..policy.exercise_gate import exercise_gate
-from ..schemas import AgentResult, AnalysisContext, PatientProfile
+from ..schemas import AgentResult, Alert, AnalysisContext, PatientProfile
 from .base import BaseAgent
 
 MEAL_LABEL = {"breakfast": "sáng", "lunch": "trưa", "dinner": "tối"}
 MEAL_ALIAS = {"sang": "breakfast", "trua": "lunch", "toi": "dinner"}
 PORTIONS = (0.5, 1.0, 1.5, 2.0)
+ALLERGY_GROUPS = {"hai san": {"tom", "ca"}, "seafood": {"tom", "ca"}, "lua mi": {"gluten"}, "bot mi": {"gluten"}}
 
 
 def energy_kcal(p: PatientProfile, dtype: str) -> tuple[float, str]:
@@ -34,11 +35,18 @@ def carb_per_meal(p: PatientProfile, dtype: str) -> tuple[float, dict]:
 class NutritionAgent(BaseAgent):
     name = "Dinh dưỡng"
 
+    def _banned(self, allergy: str) -> set[str]:
+        """Dị ứng người dùng gõ -> các chất gây dị ứng trong KB ("trứng gà" -> trứng, "hải sản" -> tôm, cá)."""
+        a = fold(allergy).strip()
+        words = set(a.split())
+        known = {fold(x) for f in self.kb.foods for x in f["allergens"]}
+        return ALLERGY_GROUPS.get(a, set()) | {k for k in known if words and (set(k.split()) <= words or words <= set(k.split()))}
+
     def _allowed(self, p: PatientProfile) -> list[dict]:
-        allergies = {fold(a).strip() for a in p.allergies if a.strip()}
+        banned = set().union(*[self._banned(a) for a in p.allergies]) if p.allergies else set()
         low_salt = p.hypertension or p.heart_failure or p.egfr < 60
         return [f for f in self.kb.foods
-                if not ({fold(a) for a in f["allergens"]} & allergies)
+                if not ({fold(a) for a in f["allergens"]} & banned)
                 and (f["vegetarian"] or not p.vegetarian)
                 and not (low_salt and f["high_sodium"])]
 
@@ -85,5 +93,7 @@ class NutritionAgent(BaseAgent):
         details = {"budget_g": budget, **info, "meal": meal,
                    "menu": {"items": items, "total_carb": total, "snacks": snacks}}
         summary = f"Gợi ý bữa {MEAL_LABEL[meal]} ~{total} g carbohydrate (ngân sách {budget:.0f} g); thực đơn lấy từ cơ sở tri thức."
-        return AgentResult(self.name, summary, details, actions, [],
+        alerts = [Alert("warning", f"Chưa đối chiếu được dị ứng '{a}' với thực đơn: hãy tự kiểm tra từng món.", self.name)
+                  for a in p.allergies if a.strip() and not self._banned(a)]
+        return AgentResult(self.name, summary, details, actions, alerts,
                            self.rag.retrieve("nguyên tắc dinh dưỡng tinh bột", k=2, topic="nutrition"))

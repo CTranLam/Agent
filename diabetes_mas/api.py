@@ -1,4 +1,5 @@
 """REST API + trang web. Chạy cục bộ: uvicorn diabetes_mas.api:app --host 127.0.0.1"""
+import re
 from dataclasses import asdict
 from pathlib import Path
 from typing import Literal
@@ -48,8 +49,8 @@ class ProfileIn(Strict):
     autoantibody: bool | None = None
     on_insulin: bool = False
     medications: list[str] = Field(default_factory=list, max_length=30)
-    isf: float = Field(40, ge=5, le=200)
-    icr: float = Field(12, ge=1, le=100)
+    isf: float | None = Field(None, ge=5, le=200)
+    icr: float | None = Field(None, ge=1, le=100)
     diabetes_type_known: Literal["T1", "T2"] | None = None
     allergies: list[str] = Field(default_factory=list, max_length=30)
     vegetarian: bool = False
@@ -57,7 +58,8 @@ class ProfileIn(Strict):
 
 class AnalyzeIn(Strict):
     profile: ProfileIn
-    readings: list[float] = Field(min_length=1, max_length=288)
+    readings: list[float] | None = Field(None, min_length=1, max_length=288)
+    series_text: str | None = Field(None, max_length=5000)
     unit: Literal["mg/dL", "mmol/L"] = "mg/dL"
     planned_carbs: float | None = Field(None, ge=0, le=300)
     minutes_since_insulin: float | None = Field(None, ge=0, le=1440)
@@ -68,6 +70,20 @@ class AnalyzeIn(Strict):
 
 class AskIn(Strict):
     question: str = Field(max_length=1000)
+
+
+def parse_series(text: str, unit: str) -> list[float]:
+    """Chuỗi người dùng gõ. Với mmol/L, dấu phẩy giữa hai chữ số là dấu thập phân (2,9 = 2.9)."""
+    if unit == "mmol/L":
+        text = re.sub(r"(\d),(\d)", r"\1.\2", text)
+    parts = [x for x in re.split(r"[\s,;]+", text) if x]
+    try:
+        values = [float(x) for x in parts]
+    except ValueError:
+        raise ValueError("Chuỗi đường huyết chỉ được chứa số.")
+    if not values or len(values) > 288:
+        raise ValueError("Chuỗi đường huyết cần từ 1 đến 288 số đo.")
+    return values
 
 
 def graph_data(kb) -> dict:
@@ -105,11 +121,15 @@ def create_app(orchestrator: Orchestrator | None = None, rag: RAG | None = None)
 
     @app.post("/analyze")
     def analyze(req: AnalyzeIn):
-        readings = [x * MMOL_TO_MGDL for x in req.readings] if req.unit == "mmol/L" else req.readings
         profile = PatientProfile(**req.profile.model_dump())
+        mmol = req.unit == "mmol/L"
         try:
+            raw = parse_series(req.series_text, req.unit) if req.series_text is not None else req.readings
+            if raw is None:
+                raise ValueError("Cần ít nhất 1 số đo đường huyết.")
+            readings = [x * MMOL_TO_MGDL for x in raw] if mmol else raw
             report = orchestrator.analyze(profile, readings, req.planned_carbs, req.minutes_since_insulin,
-                                          req.last_insulin_units, req.reading_age_min, req.meal_type)
+                                          req.last_insulin_units, req.reading_age_min, req.meal_type, unit_confirmed=mmol)
         except ValueError as e:
             raise HTTPException(422, str(e))
         return report.to_dict()

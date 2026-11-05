@@ -47,7 +47,7 @@ Sinh tự động bởi `python -m diabetes_mas.eval.report_metrics`.
 
 | Bộ truy xuất | Recall@3 | MRR |
 |---|---|---|
-| Đếm từ trùng | 0.571 | 0.559 |
-| BM25 + bigram + đồng nghĩa | 0.964 | 0.954 |
+| Đếm từ trùng | 0.548 | 0.526 |
+| BM25 + bigram + đồng nghĩa | 0.968 | 0.958 |
 
-28 câu hỏi. **Giới hạn:** Bộ câu hỏi do chính người viết KB soạn nên số đo có xu hướng lạc quan; bộ lọc từ chuyên môn ngắn được thêm sau khi thấy câu trượt.
+31 câu hỏi. **Giới hạn:** Bộ câu hỏi do chính người viết KB soạn nên số đo có xu hướng lạc quan; bộ lọc từ chuyên môn ngắn được thêm sau khi thấy câu trượt.

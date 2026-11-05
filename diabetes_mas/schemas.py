@@ -25,8 +25,8 @@ class PatientProfile:
     autoantibody: bool | None = None
     on_insulin: bool = False
     medications: list[str] = field(default_factory=list)
-    isf: float = 40.0
-    icr: float = 12.0
+    isf: float | None = None  # bác sĩ cá thể hoá; không có thì không tính liều, không dùng giá trị mặc định
+    icr: float | None = None
     diabetes_type_known: str | None = None
     allergies: list[str] = field(default_factory=list)
     vegetarian: bool = False
@@ -107,6 +107,7 @@ class Report:
     synthesis_note: str | None
     sources: list[str]
     disclaimer: str
+    readings: list[float] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return asdict(self)

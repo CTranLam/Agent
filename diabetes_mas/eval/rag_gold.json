@@ -1,30 +1,190 @@
 [
- {"q":"bị tụt đường phải làm gì","gold":["Xử trí hạ đường huyết theo quy tắc 15-15"]},
- {"q":"đường huyết bao nhiêu thì gọi là hạ","gold":["Phân mức hạ đường huyết"]},
- {"q":"run tay vã mồ hôi có phải thiếu đường không","gold":["Triệu chứng hạ đường huyết"]},
- {"q":"uống rượu có sao không","gold":["Rượu bia và hạ đường huyết"]},
- {"q":"có nên lái xe khi đường thấp","gold":["Lái xe và hạ đường huyết"]},
- {"q":"đường cao quá phải làm sao","gold":["Xử trí tăng đường huyết","Dấu hiệu cấp cứu của tăng đường huyết"]},
- {"q":"khi nào cần thử ceton","gold":["Kiểm tra ceton khi đường huyết cao"]},
- {"q":"HbA1c bao nhiêu là bị tiểu đường","gold":["Tiêu chuẩn chẩn đoán đái tháo đường"]},
- {"q":"TIR mục tiêu là bao nhiêu phần trăm","gold":["Mục tiêu thời gian trong khoảng"]},
- {"q":"chế độ ăn uống thế nào","gold":["Nguyên tắc dinh dưỡng","Chọn tinh bột và chỉ số đường huyết"]},
- {"q":"có được uống trà sữa không","gold":["Hạn chế đường tự do"]},
- {"q":"ăn mặn có hại không","gold":["Hạn chế muối"]},
- {"q":"nên ăn cơm gạo lứt hay cơm trắng","gold":["Chọn tinh bột và chỉ số đường huyết"]},
- {"q":"béo phì có cần giảm cân không","gold":["Giảm cân khi thừa cân"]},
- {"q":"mỗi tuần tập thể dục bao lâu","gold":["Mức vận động khuyến nghị"]},
- {"q":"đường 300 có được tập không","gold":["An toàn đường huyết khi vận động"]},
- {"q":"bị bệnh tim có tập được không","gold":["Vận động khi có bệnh tim mạch"]},
- {"q":"suy thận có uống metformin được không","gold":["Metformin và chức năng thận"]},
- {"q":"gliclazide có gây tụt đường không","gold":["Sulfonylurea và nguy cơ hạ đường huyết"]},
- {"q":"suy tim dùng thuốc gì","gold":["Thuốc khi có suy tim"]},
- {"q":"tự đổi thuốc được không","gold":["Không tự ý đổi thuốc"]},
- {"q":"vừa chích insulin xong có chích thêm được không","gold":["An toàn khi dùng insulin"]},
- {"q":"đếm carb để tính liều như thế nào","gold":["Đếm carbohydrate và liều bữa ăn"]},
- {"q":"tiêm insulin ở đâu","gold":["Kỹ thuật tiêm insulin"]},
- {"q":"bao lâu khám mắt một lần","gold":["Tầm soát biến chứng mắt"]},
- {"q":"chăm sóc bàn chân sao cho đúng","gold":["Chăm sóc bàn chân"]},
- {"q":"đang có bầu thì quản lý đường huyết sao","gold":["Đái tháo đường thai kỳ và mang thai"]},
- {"q":"người già cần mục tiêu đường huyết thế nào","gold":["Người cao tuổi"]}
+ {
+  "q": "bị tụt đường phải làm gì",
+  "gold": [
+   "Xử trí hạ đường huyết theo quy tắc 15-15"
+  ]
+ },
+ {
+  "q": "đường huyết bao nhiêu thì gọi là hạ",
+  "gold": [
+   "Phân mức hạ đường huyết"
+  ]
+ },
+ {
+  "q": "run tay vã mồ hôi có phải thiếu đường không",
+  "gold": [
+   "Triệu chứng hạ đường huyết"
+  ]
+ },
+ {
+  "q": "uống rượu có sao không",
+  "gold": [
+   "Rượu bia và hạ đường huyết"
+  ]
+ },
+ {
+  "q": "có nên lái xe khi đường thấp",
+  "gold": [
+   "Lái xe và hạ đường huyết"
+  ]
+ },
+ {
+  "q": "đường cao quá phải làm sao",
+  "gold": [
+   "Xử trí tăng đường huyết",
+   "Dấu hiệu cấp cứu của tăng đường huyết"
+  ]
+ },
+ {
+  "q": "khi nào cần thử ceton",
+  "gold": [
+   "Kiểm tra ceton khi đường huyết cao"
+  ]
+ },
+ {
+  "q": "HbA1c bao nhiêu là bị tiểu đường",
+  "gold": [
+   "Tiêu chuẩn chẩn đoán đái tháo đường"
+  ]
+ },
+ {
+  "q": "TIR mục tiêu là bao nhiêu phần trăm",
+  "gold": [
+   "Mục tiêu thời gian trong khoảng"
+  ]
+ },
+ {
+  "q": "chế độ ăn uống thế nào",
+  "gold": [
+   "Nguyên tắc dinh dưỡng",
+   "Chọn tinh bột và chỉ số đường huyết"
+  ]
+ },
+ {
+  "q": "có được uống trà sữa không",
+  "gold": [
+   "Hạn chế đường tự do"
+  ]
+ },
+ {
+  "q": "ăn mặn có hại không",
+  "gold": [
+   "Hạn chế muối"
+  ]
+ },
+ {
+  "q": "nên ăn cơm gạo lứt hay cơm trắng",
+  "gold": [
+   "Chọn tinh bột và chỉ số đường huyết"
+  ]
+ },
+ {
+  "q": "béo phì có cần giảm cân không",
+  "gold": [
+   "Giảm cân khi thừa cân"
+  ]
+ },
+ {
+  "q": "mỗi tuần tập thể dục bao lâu",
+  "gold": [
+   "Mức vận động khuyến nghị"
+  ]
+ },
+ {
+  "q": "đường 300 có được tập không",
+  "gold": [
+   "An toàn đường huyết khi vận động"
+  ]
+ },
+ {
+  "q": "bị bệnh tim có tập được không",
+  "gold": [
+   "Vận động khi có bệnh tim mạch"
+  ]
+ },
+ {
+  "q": "suy thận có uống metformin được không",
+  "gold": [
+   "Metformin và chức năng thận"
+  ]
+ },
+ {
+  "q": "gliclazide có gây tụt đường không",
+  "gold": [
+   "Sulfonylurea và nguy cơ hạ đường huyết"
+  ]
+ },
+ {
+  "q": "suy tim dùng thuốc gì",
+  "gold": [
+   "Thuốc khi có suy tim"
+  ]
+ },
+ {
+  "q": "tự đổi thuốc được không",
+  "gold": [
+   "Không tự ý đổi thuốc"
+  ]
+ },
+ {
+  "q": "vừa chích insulin xong có chích thêm được không",
+  "gold": [
+   "An toàn khi dùng insulin"
+  ]
+ },
+ {
+  "q": "đếm carb để tính liều như thế nào",
+  "gold": [
+   "Đếm carbohydrate và liều bữa ăn"
+  ]
+ },
+ {
+  "q": "tiêm insulin ở đâu",
+  "gold": [
+   "Kỹ thuật tiêm insulin"
+  ]
+ },
+ {
+  "q": "bao lâu khám mắt một lần",
+  "gold": [
+   "Tầm soát biến chứng mắt"
+  ]
+ },
+ {
+  "q": "chăm sóc bàn chân sao cho đúng",
+  "gold": [
+   "Chăm sóc bàn chân"
+  ]
+ },
+ {
+  "q": "đang có bầu thì quản lý đường huyết sao",
+  "gold": [
+   "Đái tháo đường thai kỳ và mang thai"
+  ]
+ },
+ {
+  "q": "người già cần mục tiêu đường huyết thế nào",
+  "gold": [
+   "Người cao tuổi"
+  ]
+ },
+ {
+  "q": "tụt đường phải làm sao",
+  "gold": [
+   "Xử trí hạ đường huyết theo quy tắc 15-15"
+  ]
+ },
+ {
+  "q": "đường huyết thấp phải làm sao",
+  "gold": [
+   "Xử trí hạ đường huyết theo quy tắc 15-15"
+  ]
+ },
+ {
+  "q": "hạ đường huyết",
+  "gold": [
+   "Xử trí hạ đường huyết theo quy tắc 15-15"
+  ]
+ }
 ]

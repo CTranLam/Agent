@@ -43,16 +43,21 @@ def classify_with_prob(p: PatientProfile, prob: float, thr: float) -> dict:
     inferred = False
     if p.diabetes_type_known:
         code, conf, source, risk = p.diabetes_type_known, 1.0, "đã chẩn đoán", "Đã chẩn đoán"
-    elif prob >= thr:
-        code, conf, source, risk = infer_type(p), prob, "DL + quy tắc phân type", "Nguy cơ cao"
-        inferred = True
     elif meets_ada_diabetes(p):
-        code, conf, source = infer_type(p), 1.0, "tiêu chuẩn ADA (DL dưới ngưỡng - cần xét nghiệm xác nhận)"
+        state = "DL vượt ngưỡng" if prob >= thr else "DL dưới ngưỡng"
+        code, conf, source = infer_type(p), 1.0, f"tiêu chuẩn ADA ({state} - cần xét nghiệm xác nhận)"
         risk, inferred = "Đạt tiêu chuẩn chẩn đoán", True
-    elif is_prediabetes(p):
-        code, conf, source, risk = "PRE", 1 - prob, "DL + ngưỡng ADA", "Tiền tiểu đường"
+    elif p.on_insulin:
+        code, conf, source = infer_type(p), max(prob, 1 - prob), "đang dùng insulin, chưa nhập loại tiểu đường"
+        risk, inferred = "Đang điều trị", True
     else:
-        code, conf, source, risk = "NONE", 1 - prob, "DL", "Nguy cơ thấp"
+        # ngưỡng sàng lọc có precision thấp: chỉ báo nguy cơ, không dán nhãn đái tháo đường
+        screened = prob >= thr
+        conf = max(prob, 1 - prob)
+        if is_prediabetes(p):
+            code, source, risk = "PRE", "DL + ngưỡng ADA", "Nguy cơ cao, cần xét nghiệm" if screened else "Tiền tiểu đường"
+        else:
+            code, source, risk = "NONE", "DL", "Nguy cơ cao, cần xét nghiệm" if screened else "Nguy cơ thấp"
     return {"code": code, "class_name": CLASS_NAMES.get(code, code), "confidence": round(float(conf), 3),
             "source": source, "risk_level": risk, "prob": round(float(prob), 3), "threshold": round(float(thr), 3),
             "type_low_confidence": inferred and p.c_peptide is None and p.autoantibody is None,

@@ -25,6 +25,8 @@ def test_apply_safety_invariants_random():
             assert d.dose == 0, ctx
         if age is not None and age > C.READING_STALE_MIN:
             assert d.dose == 0, ctx
+        if mins is None and prop > 0:
+            assert d.dose == 0, ctx
         if mins is not None and mins < C.INSULIN_ACTION_MIN and last is None and prop > 0:
             assert d.dose == 0, ctx
         if d.dose > 0:

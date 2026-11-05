@@ -27,7 +27,7 @@ def test_rules_force_zero(kw):
     assert d.dose == 0 and d.blocked and d.rules_fired
 
 def test_allowed_dose_has_reference_alert():
-    d = apply_safety(T1(), 220, 200, 2.0, None, "T1", n_readings=12)
+    d = apply_safety(T1(), 220, 200, 2.0, 240, "T1", n_readings=12)
     assert d.dose == 2.0 and any(a.message.startswith("Liều chỉ mang tính THAM KHẢO") for a in d.alerts)
 
 def test_not_on_insulin_zero():

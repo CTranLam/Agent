@@ -25,6 +25,7 @@ def audit(ctx: AnalysisContext, results: dict[str, AgentResult]) -> list[Finding
 
     if med:
         d = med.details
+        before = (d.get("correction"), d.get("meal"))
         correction, meal = d.get("correction") or 0, d.get("meal") or 0
         low_or_soon = ctx.glucose < C.HYPO_L1 or ctx.forecast_min < C.HYPO_L1
         stale = ctx.reading_age_min is not None and ctx.reading_age_min > C.READING_STALE_MIN
@@ -38,18 +39,34 @@ def audit(ctx: AnalysisContext, results: dict[str, AgentResult]) -> list[Finding
                 cancel("correction", "A1", "đang/sắp hạ đường huyết")
             elif correction > 0 and (stale or ctx.n_readings < C.MIN_READINGS_FOR_DOSE):
                 cancel("correction", "A3", "số đo cũ hoặc quá ít")
+            elif correction > 0 and ctx.profile.on_insulin and ctx.minutes_since_insulin is None:
+                cancel("correction", "A3", "chưa biết lần tiêm gần nhất")
             if meal > 0 and ctx.planned_carbs is None:
                 cancel("meal", "A2", "người dùng không nhập lượng carb")
             elif meal > 0 and low_or_soon:
                 cancel("meal", "A1", "đang/sắp hạ đường huyết")
+            elif meal > 0 and stale:
+                cancel("meal", "A3", "số đo cũ")
             correction, meal = d.get("correction") or 0, d.get("meal") or 0
             if correction > C.MAX_CORRECTION_DOSE:
                 d["correction"] = correction = C.MAX_CORRECTION_DOSE
                 out.append(Finding("A4", f"giảm liều bù về trần {C.MAX_CORRECTION_DOSE:g} đv"))
+            if meal > C.MAX_MEAL_BOLUS:
+                d["meal"] = meal = C.MAX_MEAL_BOLUS
+                out.append(Finding("A4", f"giảm liều bữa ăn về trần {C.MAX_MEAL_BOLUS:g} đv"))
             if correction + meal > C.MAX_TOTAL_BOLUS:
                 d["meal"] = meal = min(meal, C.MAX_TOTAL_BOLUS)
                 d["correction"] = max(0.0, C.MAX_TOTAL_BOLUS - meal)
                 out.append(Finding("A4", f"giảm tổng liều về trần {C.MAX_TOTAL_BOLUS:g} đv"))
+            if not ctx.profile.on_insulin:
+                if d.get("correction"):
+                    cancel("correction", "A8", "bệnh nhân không dùng insulin")
+                if d.get("meal"):
+                    cancel("meal", "A8", "bệnh nhân không dùng insulin")
+        if (d.get("correction"), d.get("meal")) != before:
+            # văn bản phải khớp liều đã sửa, kể cả phần đưa cho LLM
+            med.actions[:] = [a for a in med.actions if not a.startswith(("Liều bù tham khảo", "Liều bữa ăn tham khảo"))]
+            med.summary = f"Auditor đã điều chỉnh liều: bù {d.get('correction') or 0:g} đv, bữa ăn {d.get('meal') or 0:g} đv."
 
     gate = exercise_gate(ctx)
     if not gate.allowed:

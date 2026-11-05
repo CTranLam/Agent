@@ -42,5 +42,5 @@ SCENARIOS = {
     "8": {"title": "Type 1, đường huyết 265: chưa được tập",
           "profile": PatientProfile(name="Ca 8", age=24, sex="F", weight_kg=55, height_cm=160, hba1c=8.8, on_insulin=True,
                                     medications=["Insulin aspart", "Insulin glargine"], isf=45, icr=12, diabetes_type_known="T1"),
-          "readings": cgm(250, 265, seed=8)},
+          "readings": cgm(250, 265, seed=8), "minutes_since_insulin": 240},
 }

@@ -22,7 +22,7 @@ SYNONYMS = {
     "man": "muoi", "keto": "ceton",
 }
 # Từ để hỏi: giúp xếp hạng, nhưng không chứng tỏ câu hỏi thuộc phạm vi tiểu đường.
-QUESTION_SYNONYMS = {"lam gi": "xu tri", "the nao": "xu tri"}
+QUESTION_SYNONYMS = {"lam gi": "xu tri", "the nao": "xu tri", "lam sao": "xu tri"}
 TOPIC_KEYWORDS = {
     "hypoglycemia": ["ha duong huyet"], "hyperglycemia": ["tang duong huyet", "ceton"],
     "nutrition": ["dinh duong"], "exercise": ["van dong"],
@@ -32,7 +32,11 @@ TOPIC_KEYWORDS = {
 }
 STOP = set("""bi la va cua co khong thi ma o toi minh ban nay hom gi nao the phai lam nhu sao nen duoc cho
             mot cac nhung voi khi neu de tu ve trong ngoai tren duoi rat nhieu it ai dau""".split())
-DOMAIN_SHORT = {"carb", "lieu", "muoi", "man", "thuoc", "tiem"}
+# Âm tiết phổ biến ngoài y khoa ("đường" cao tốc, "chứng" khoán, tiền "lương").
+GENERIC = {"duong", "huyet", "chung", "luong", "tien", "khoan"}
+OFF_TOPIC = ("cao toc",)  # shortcut: danh sách tay, chưa lọc hết (vd "nhập khẩu thuốc lá"); cần chính xác thì dùng embedding
+TREATMENT_TITLE = "Xử trí hạ đường huyết theo quy tắc 15-15"
+DOMAIN_SHORT = {"carb", "lieu", "muoi", "man", "thuoc", "tiem", "tap"}
 MIN_UNIGRAM_LEN = 5  # shortcut: lọc ngoài phạm vi bằng độ dài từ; nếu cần chính xác hơn thì dùng embedding
 
 
@@ -78,10 +82,12 @@ class RAG:
 
     def retrieve(self, query: str, k: int = 3, topic: str | None = None) -> list[Evidence]:
         q = Counter(_query_features(query))
+        if any(p in " ".join(tokens(query)) for p in OFF_TOPIC):
+            return []
         # ngoài phạm vi: phải khớp bigram hoặc một từ đủ dài, không chỉ vài âm tiết rời
         unexpanded = set(tokens(query))
         useful = {t for t in _query_features(query, question_words=False)
-                  if (t in self._idf or t in unexpanded & DOMAIN_SHORT) and ("_" in t or len(t) >= MIN_UNIGRAM_LEN or t in DOMAIN_SHORT)}
+                  if t not in GENERIC and (t in self._idf or t in unexpanded & DOMAIN_SHORT) and ("_" in t or len(t) >= MIN_UNIGRAM_LEN or t in DOMAIN_SHORT)}
         if not useful:
             return []
         raw = [self._bm25(q, i) for i in range(len(self.docs))]
@@ -92,7 +98,9 @@ class RAG:
         hits = {t for t, kws in TOPIC_KEYWORDS.items() if any(w in expanded for w in kws)}
         if topic:
             hits.add(topic)
-        scored = [(raw[i] / top + (0.5 if self.docs[i]["topic"] in hits else 0.0), i)
+        # câu nào về hạ đường huyết cũng phải thấy được đoạn xử trí
+        scored = [(raw[i] / top + (0.5 if self.docs[i]["topic"] in hits else 0.0)
+                   + (0.6 if "hypoglycemia" in hits and self.docs[i]["title"] == TREATMENT_TITLE else 0.0), i)
                   for i in range(len(self.docs)) if raw[i] > 0]
         scored.sort(key=lambda x: (-x[0], x[1]))
         return [Evidence(self.docs[i]["source"], self.docs[i]["title"], self.docs[i]["text"], round(s, 3))
@@ -111,7 +119,7 @@ class RAG:
         src = "\n".join(f"[{e.source}] {e.title}: {e.text}" for e in ev)
         out = llm.complete(ANSWER_SYSTEM, f"Bằng chứng:\n{src}\n\nCâu hỏi: {question}")
         if out is None:
-            result["note"] = f"LLM lỗi ({llm.last_error}), dùng trích nguyên văn."
+            result["note"] = f"LLM lỗi ({llm.last_error}), dùng đoạn trích."
         elif is_grounded(out, src)[0]:
             result.update(answer=out, mode="llm")
         else:
