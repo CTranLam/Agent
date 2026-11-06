@@ -10,7 +10,7 @@ Demo môn học Phát triển các hệ thống thông minh. Là công cụ hỗ
 | Deep learning → Phân loại | `DiabetesNet` (`dl/models.py`, `dl/train.py`) + tiêu chuẩn ADA (`dl/decision.py`) |
 | Deep learning → Dự đoán | `GlucoseLSTM` (`dl/train_lstm.py`), dự báo bảo thủ |
 | Web, sách → KB | `knowledge_docs/*.md`, `kb/foods.json`, `kb/drugs.json`, `kb/store.py` |
-| RAG | `kb/rag.py` (BM25 + bigram + đồng nghĩa), `llm.py` + `guardrail.py` (tuỳ chọn) |
+| RAG | `kb/rag.py` (BM25 + bigram + đồng nghĩa), trả về đoạn trích kèm nguồn |
 | Reinforcement learning | `policy/rl_insulin.py` |
 | Rule | `policy/safety_rules.py`, `policy/exercise_gate.py`, `agents/auditor.py` |
 | Agent | `agents/orchestrator.py` + 4 agent chuyên trách |
@@ -24,7 +24,7 @@ python3 -m venv .venv
 .venv/bin/uvicorn diabetes_mas.api:app --host 127.0.0.1 --port 8000   # mở http://127.0.0.1:8000
 ```
 
-Model đã huấn luyện có sẵn trong `artifacts/`. Muốn bật LLM thì đặt `ANTHROPIC_API_KEY`; không có khoá thì hệ thống trả nguyên văn đoạn trích từ cơ sở tri thức.
+Model đã huấn luyện có sẵn trong `artifacts/`. Hệ thống không gọi API ngoài và không dùng LLM: mô hình học sâu và RL do dự án tự huấn luyện, phần hỏi đáp trả đoạn trích từ cơ sở tri thức.
 
 ## Huấn luyện lại và đo
 
