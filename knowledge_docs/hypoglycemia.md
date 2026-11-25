@@ -1,24 +1,35 @@
-## Phân mức hạ đường huyết
-source: ADA Standards of Care
+## Ngưỡng hạ đường huyết
+source: Vinmec - Xử lý hạ đường huyết ở người tiểu đường
+url: https://www.vinmec.com/vie/bai-viet/xu-ly-ha-duong-huyet-o-nguoi-tieu-duong-vi
 topic: hypoglycemia
-Mức 1: đường huyết dưới 70 mg/dL và từ 54 mg/dL trở lên. Mức 2: dưới 54 mg/dL, hạ đường huyết có ý nghĩa lâm sàng, cần xử trí ngay. Mức 3: biến cố nặng kèm suy giảm ý thức hoặc thể chất, cần người khác giúp đỡ.
+Hạ đường huyết là biến chứng hay gặp ở người đái tháo đường và là tình trạng cấp cứu nội khoa. Xét nghiệm đường huyết dưới 3,9 mmol/l (70 mg/dl) giúp xác định chẩn đoán.
 
 ## Xử trí hạ đường huyết theo quy tắc 15-15
-source: ADA Standards of Care
+source: Vinmec - Khi hạ đường huyết nên ăn gì
+url: https://www.vinmec.com/vie/bai-viet/khi-ha-duong-huyet-nen-gi-vi
 topic: hypoglycemia
-Dùng 15-20 g carbohydrate tác dụng nhanh (ưu tiên glucose), đo lại sau 15 phút, lặp lại nếu vẫn dưới 70 mg/dL. Khi đường huyết trở lại bình thường, ăn bữa chính hoặc bữa phụ để tránh hạ lại. Nếu người bệnh lơ mơ hoặc không nuốt được: không cho ăn uống bằng đường miệng, gọi cấp cứu và dùng glucagon nếu có.
+Khi có triệu chứng, ăn hoặc uống 15-20 gam carbohydrate tác dụng nhanh và kiểm tra đường huyết sau 15 phút. Nếu vẫn dưới 70 mg/dL (3,9 mmol/L) thì bổ sung thêm 15-20 gam và lặp lại các bước này.
+
+## Xử trí khi hạ đường huyết nặng
+source: Vinmec - Xử lý hạ đường huyết ở người tiểu đường
+url: https://www.vinmec.com/vie/bai-viet/xu-ly-ha-duong-huyet-o-nguoi-tieu-duong-vi
+topic: hypoglycemia
+Hạ đường huyết nghiêm trọng kèm co giật, mất ý thức hoặc hôn mê cần ngay lập tức đưa người bệnh đến cơ sở y tế gần nhất hoặc gọi cấp cứu, đừng cố cho người bệnh ăn uống. Không xử trí kịp thời có thể nguy hiểm đến tính mạng.
 
 ## Triệu chứng hạ đường huyết
-source: Bộ Y tế - Hướng dẫn chẩn đoán và điều trị đái tháo đường típ 2
+source: Vinmec - Các triệu chứng hạ đường huyết khi vừa bắt đầu
+url: https://www.vinmec.com/vie/bai-viet/cac-trieu-chung-ha-duong-huyet-khi-vua-bat-dau-vi
 topic: hypoglycemia
-Các dấu hiệu thường gặp là run tay, vã mồ hôi, đói, hồi hộp, chóng mặt, nhìn mờ, lú lẫn. Người cao tuổi hoặc bệnh lâu năm có thể không nhận ra triệu chứng, nên cần đo đường huyết khi nghi ngờ.
+Dấu hiệu có thể gồm chóng mặt, lo âu, đau đầu, da xanh tái, vã mồ hôi, hồi hộp, đánh trống ngực và nhịp tim nhanh. Tình trạng này có thể diễn biến nhanh dẫn đến hôn mê nên cần nhận biết sớm.
 
 ## Rượu bia và hạ đường huyết
-source: ADA Standards of Care
+source: Vinmec - Nguyên nhân dẫn đến đường huyết thấp và cách xử trí bệnh lý
+url: https://www.vinmec.com/vie/bai-viet/nguyen-nhan-dan-den-duong-huyet-thap-va-cach-xu-tri-benh-ly-vi
 topic: hypoglycemia
-Rượu làm tăng nguy cơ hạ đường huyết muộn, có thể kéo dài nhiều giờ, nhất là khi uống lúc đói hoặc đang dùng insulin hay sulfonylurea. Nếu uống, cần hạn chế lượng, ăn kèm thức ăn và đo đường huyết trước khi ngủ.
+Uống nhiều rượu mà không ăn có thể ngăn gan giải phóng glucose dự trữ vào máu và gây hạ đường huyết.
 
-## Lái xe và hạ đường huyết
-source: ADA Standards of Care
+## Ăn kiêng và hạ đường huyết
+source: Vinmec - Nguyên nhân dẫn đến đường huyết thấp và cách xử trí bệnh lý
+url: https://www.vinmec.com/vie/bai-viet/nguyen-nhan-dan-den-duong-huyet-thap-va-cach-xu-tri-benh-ly-vi
 topic: hypoglycemia
-Không lái xe khi đang hoặc nghi ngờ hạ đường huyết. Người dùng insulin hoặc sulfonylurea nên đo đường huyết trước khi lái xe, mang theo carbohydrate nhanh; nếu thấp, xử trí và chờ ổn định rồi mới lái.
+Ăn quá ít trong thời gian dài hoặc ăn kiêng giảm cân có thể góp phần gây hạ đường huyết. Đây cũng là tác dụng phụ của thuốc điều trị tiểu đường.

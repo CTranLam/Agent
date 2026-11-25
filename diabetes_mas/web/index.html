@@ -77,6 +77,7 @@ details summary{cursor:pointer;font-size:13px;color:var(--ink);margin-bottom:8px
 .agents{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
 .agent.wide{grid-column:1/-1}
 .agent h3{margin:0 0 4px;font-size:14.5px;display:flex;align-items:center;gap:7px}
+.agent h3 .vi{color:var(--mute);font-weight:500;font-size:13px}
 .dot{width:9px;height:9px;border-radius:3px;display:inline-block}
 .agent ul{margin:8px 0 0;padding-left:18px}.agent li{margin-bottom:3px}
 table{width:100%;border-collapse:collapse;margin-top:6px;font-size:13px}
@@ -85,7 +86,7 @@ th,td{padding:6px 8px 6px 0;border-bottom:1px solid var(--line)}
 td:last-child,th:last-child{text-align:right;padding-right:0}
 .sub{font-size:12.5px;color:var(--mute);margin-top:6px}
 .dose{display:flex;gap:10px;margin:8px 0;flex-wrap:wrap}
-.dose div{flex:1;min-width:110px;background:var(--teal-l);border-radius:10px;padding:8px 12px}
+.dose>div{flex:1;min-width:110px;background:var(--teal-l);border-radius:10px;padding:8px 12px}
 .dose b{display:block;font-size:20px;color:var(--teal-d)}
 .dose span{font-size:12px;color:var(--mute)}
 .empty{color:var(--mute);text-align:center;padding:60px 20px}
@@ -97,7 +98,7 @@ svg text{font-family:inherit}
 .chat header .t{font-weight:700;font-size:13.5px;line-height:1.2}
 .chat header .s{font-size:11.5px;color:var(--mute)}
 .chat header .s::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);margin-right:5px;vertical-align:1px}
-.ghost{border:1px solid var(--line);background:#fff;border-radius:999px;padding:2px 10px;font-size:12px;cursor:pointer;margin-left:auto}
+.ghost{border:1px solid var(--line);background:#fff;border-radius:999px;padding:2px 10px;font-size:12px;cursor:pointer;margin-left:auto;white-space:nowrap;flex:none}
 .icon{border:0;background:transparent;cursor:pointer;font-size:15px;color:var(--mute);padding:2px 5px}
 .msgs{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:10px;background:#fbfcfc}
 .bot{border:1px solid var(--line);background:#fff;border-radius:12px;padding:9px 11px;font-size:13px;margin-right:18px}
@@ -231,13 +232,20 @@ svg text{font-family:inherit}
     <div id="graph" style="overflow:auto"></div>
     <p class="sub" id="gnote">Di chuột lên một đường để xem chi tiết.</p>
   </div>
+  <div class="card" style="margin-top:14px">
+    <h2>Truy vấn nhiều bước trên đồ thị</h2>
+    <p class="hint" id="kgmeta">Chọn một bệnh nhân mẫu: hệ thống đi qua nhiều quan hệ (bệnh nhân → thuốc → chống chỉ định → bệnh lý nền → thuốc thay thế, chỉ số → ngưỡng → bệnh, ...).</p>
+    <label class="f">Bệnh nhân mẫu <select id="kgp" class="inp"></select></label>
+    <label class="f">Hoặc triệu chứng <select id="kgs" class="inp"><option value="">(chọn)</option></select></label>
+    <div id="kgout"></div>
+  </div>
 </section>
 </main>
 <button class="fab" id="fab" type="button">💬 Hỏi đáp</button>
 <aside class="chat" id="chat" hidden aria-label="Trợ lý tiểu đường">
   <header>
     <span class="logo" aria-hidden="true">💬</span>
-    <div><div class="t">Trợ lý tiểu đường</div><div class="s">Tóm tắt từ ADA, WHO, Bộ Y tế, chưa thẩm định</div></div>
+    <div><div class="t">Trợ lý tiểu đường</div><div class="s">Từ bài viết Vinmec và PDF Bộ Y tế, chưa thẩm định</div></div>
     <button class="ghost" id="reset" type="button">Làm mới</button>
     <button class="icon" id="close" type="button" aria-label="Thu nhỏ">⌄</button>
   </header>
@@ -267,7 +275,7 @@ const svgEl = (tag, attrs, ...kids) => {
 };
 const num = id => { const v = $(id).value.trim(); return v === "" ? null : Number(v); };
 const list = id => $(id).value.split(",").map(s => s.trim()).filter(Boolean);
-const AGENT = {glucose: ["Đường huyết", "#1d5fa8"], nutrition: ["Dinh dưỡng", "#d98a1f"], medication: ["Thuốc & insulin", "#7c5cc4"], exercise: ["Vận động", "#157a4f"]};
+const AGENT = {diagnosis: ["Chẩn đoán", "#0f766e"], glucose: ["Đường huyết", "#1d5fa8"], nutrition: ["Dinh dưỡng", "#d98a1f"], medication: ["Thuốc & insulin", "#7c5cc4"], exercise: ["Vận động", "#157a4f"]};
 const LEVEL = {critical: "Khẩn", warning: "Cảnh báo", info: "Lưu ý"};
 
 function buildPayload() {
@@ -369,20 +377,30 @@ function riskRow(label, p) {
 }
 
 function agentCard(key, r) {
-  const [title, color] = AGENT[key];
-  const c = el("div", {class: "card agent" + (key === "nutrition" || key === "medication" ? " wide" : "")},
-    el("h3", null, el("span", {class: "dot", style: `background:${color}`}), title), el("div", null, r.summary));
+  const [vi, color] = AGENT[key];
+  const c = el("div", {class: "card agent" + (key === "diagnosis" || key === "nutrition" || key === "medication" ? " wide" : "")},
+    el("h3", null, el("span", {class: "dot", style: `background:${color}`}), r.agent, el("span", {class: "vi"}, vi), el("span", {class: "tag"}, r.kind)), el("div", null, r.summary));
   const d = r.details;
+  if (key === "diagnosis") {
+    c.append(el("div", {class: "dose"},
+      el("div", null, el("b", null, `${(d.prob * 100).toFixed(1)}%`), el("span", null, "Xác suất từ DiabetesNet")),
+      el("div", null, el("b", null, `${(d.threshold * 100).toFixed(1)}%`), el("span", null, "Ngưỡng sàng lọc")),
+      el("div", null, el("b", null, d.class_name), el("span", null, "Kết luận"))));
+    if (d.criteria.length) c.append(el("div", {class: "sub"}, "Tiêu chuẩn đã đạt: " + d.criteria.join("; ")));
+  }
   if (key === "glucose" && d.tir_pct !== null) {
     c.append(el("table", null, el("thead", null, el("tr", null, ["TIR", "TBR", "TAR", "CV"].map(h => el("th", null, h)))),
       el("tbody", null, el("tr", null, [d.tir_pct, d.tbr_pct, d.tar_pct, d.cv_pct].map(v => el("td", null, `${v}%`))))));
   }
   if (key === "medication" && d.correction !== null && (d.meal > 0 || d.proposed !== null || d.blocked_reason)) {
     c.append(el("div", {class: "dose"},
-      d.blocked_reason ? null : el("div", null, el("b", null, `${d.correction} đv`), el("span", null, `Liều bù (RL đề xuất ${d.proposed ?? 0} đv)`)),
-      d.meal > 0 || !d.blocked_reason ? el("div", null, el("b", null, `${d.meal} đv`), el("span", null, "Liều bữa ăn")) : null,
+      d.blocked_reason ? null : el("div", null, el("b", null, `${d.proposed ?? 0} đv`), el("span", null, "1. RLAgent đề xuất liều bù"),
+        d.rl ? el("div", {class: "sub"}, `Trạng thái: ${Math.round(d.rl.glucose)} mg/dL, xu hướng ${d.rl.trend_per_5min.toFixed(1)}/5 phút, ISF ${d.rl.isf}`) : null),
+      d.blocked_reason ? el("div", null, el("b", null, "Chặn"), el("span", null, "RuleAgent quyết định: không bù insulin"))
+        : el("div", null, el("b", null, `${d.correction} đv`), el("span", null, "2. RuleAgent quyết định liều bù")),
+      d.meal > 0 || !d.blocked_reason ? el("div", null, el("b", null, `${d.meal} đv`), el("span", null, "Liều bữa ăn (rule: carb / ICR)")) : null,
       d.iob !== null ? el("div", null, el("b", null, `${d.iob} đv`), el("span", null, "Insulin còn hoạt động")) : null));
-    if (d.rules_fired.length) c.append(el("div", {class: "sub"}, "Rule đã can thiệp: " + d.rules_fired.join("; ")));
+    if (d.rules_fired.length) c.append(el("div", {class: "sub"}, "Luật RuleAgent đã dùng: " + d.rules_fired.join("; ")));
   }
   if (r.actions.length) c.append(el("ul", null, r.actions.map(a => el("li", null, a))));
   if (key === "nutrition") {
@@ -408,7 +426,7 @@ function render(j) {
     el("div", {class: "big"}, String(Math.round(g)), el("small", null, "mg/dL")),
     el("span", {class: "pill " + cls}, state),
     gauge(g),
-    el("div", {class: "sub"}, "Kế hoạch: " + j.steps.map(s => AGENT[s][0]).join(" → ")));
+    el("div", {class: "sub"}, "Kế hoạch: " + j.steps.map(s => j.results[s].agent).join(" → ")));
   const right = el("div", null,
     el("div", {class: "mini"}, el("div", {class: "k"}, "Phân loại"), el("div", {class: "v"}, c.class_name), el("div", {class: "s"}, c.source)),
     el("div", {class: "mini"}, el("div", {class: "k"}, "Nguy cơ mắc tiểu đường"), el("div", {class: "v"}, c.risk_level),
@@ -420,20 +438,18 @@ function render(j) {
 
   const alerts = el("div", {class: "card"}, el("h2", null, "Cảnh báo"));
   if (!j.alerts.length) alerts.append(el("div", {class: "sub"}, "Không có cảnh báo."));
-  j.alerts.forEach(a => alerts.append(el("div", {class: "alert " + a.level}, el("b", null, `${LEVEL[a.level]}: `), a.message, el("small", null, "Agent " + a.agent))));
+  j.alerts.forEach(a => alerts.append(el("div", {class: "alert " + a.level}, el("b", null, `${LEVEL[a.level]}: `), a.message, el("small", null, a.agent))));
   out.append(alerts);
 
   if (j.audit_findings.length) {
     out.append(el("div", {class: "card", style: "border-color:#f6c9c4"}, el("h2", null, "Auditor an toàn đã can thiệp"),
       el("ul", null, j.audit_findings.map(f => el("li", null, f)))));
   }
-  if (j.synthesis) out.append(el("div", {class: "card"}, el("h2", null, "Tổng hợp"), el("div", {style: "white-space:pre-wrap"}, j.synthesis)));
-  else if (j.synthesis_note) out.append(el("div", {class: "sub", style: "margin:0 4px"}, j.synthesis_note));
 
   out.append(chart(j.readings, j.forecast));
   out.append(el("div", {class: "agents"}, j.steps.map(s => agentCard(s, j.results[s]))));
   if (j.sources.length) {
-    out.append(el("div", {class: "card"}, el("h2", null, `Nguồn tham chiếu (${j.sources.length})`), el("p", {class: "hint"}, "Bản tóm tắt giáo dục dựa trên các nguồn này, chưa thẩm định bởi bác sĩ/dược sĩ."), el("ul", {style: "margin:6px 0 0;padding-left:18px;font-size:13px"}, j.sources.map(s => el("li", null, s)))));
+    out.append(el("div", {class: "card"}, el("h2", null, `Nguồn tham chiếu (${j.sources.length})`), el("p", {class: "hint"}, "Bản tóm tắt từ các bài viết này, chưa thẩm định bởi bác sĩ/dược sĩ."), el("ul", {style: "margin:6px 0 0;padding-left:18px;font-size:13px"}, j.sources.map(s => el("li", null, s)))));
   }
   out.append(el("div", {class: "sub", style: "text-align:center"}, j.disclaimer));
 }
@@ -458,18 +474,21 @@ function fillScenario(s) {
 /* Hỏi đáp */
 function greet() {
   $("msgs").textContent = "";
-  $("msgs").append(el("div", {class: "bot"}, "Xin chào! Mình trả lời câu hỏi về tiểu đường dựa trên bản tóm tắt từ ADA, WHO, Bộ Y tế (chưa thẩm định) và luôn kèm nguồn. Bạn muốn hỏi gì?"));
+  $("msgs").append(el("div", {class: "bot"}, "Xin chào! Mình trả lời câu hỏi về tiểu đường dựa trên bản tóm tắt từ các bài viết của Vinmec và đoạn trích từ PDF hướng dẫn của Bộ Y tế (chưa thẩm định) và luôn kèm nguồn. Bạn muốn hỏi gì?"));
 }
 function botAnswer(a) {
   const box = el("div", {class: "bot"});
-  if (a.mode === "llm") box.append(el("div", {style: "white-space:pre-wrap"}, a.answer));
-  else if (a.evidence.length) {
-    box.append(el("span", {class: "mode"}, "Trích từ bản tóm tắt trong cơ sở tri thức" + (LLM_ON ? "" : " (chưa bật LLM)")));
-    a.evidence.forEach((e, i) => box.append(el("div", {class: "sec"}, el("b", null, el("span", {class: "num"}, String(i + 1)), e.title), e.text)));
+  const excerpts = () => a.evidence.map((e, i) => el("div", {class: "sec"}, el("b", null, el("span", {class: "num"}, String(i + 1)), e.title), e.text));
+  if (a.mode === "generated") {
+    box.append(el("span", {class: "mode"}, `Sinh bởi LLM (${a.model}) chỉ từ ${a.evidence.length} đoạn trích, đã kiểm tra trích dẫn`));
+    box.append(el("div", {class: "sec"}, a.answer));
+    box.append(el("details", null, el("summary", null, `Đoạn trích được dùng (${a.evidence.length})`), el("div", null, excerpts())));
+  } else if (a.evidence.length) {
+    box.append(el("span", {class: "mode"}, a.fallback_reason ? `Trích nguyên văn (không dùng câu sinh: ${a.fallback_reason})` : "Trích từ bản tóm tắt trong cơ sở tri thức"));
+    excerpts().forEach(x => box.append(x));
   } else box.append(a.answer);
-  if (a.note) box.append(el("div", {class: "sub"}, a.note));
   if (a.evidence.length) box.append(el("details", null, el("summary", null, `Nguồn (${a.evidence.length})`),
-    el("div", null, a.evidence.map(e => el("div", null, `${e.source}: ${e.title}`)))));
+    el("div", null, a.evidence.map((e, i) => el("div", null, `[${i + 1}] `, el("a", {href: e.url, target: "_blank", rel: "noopener noreferrer"}, e.source))))));
   return box;
 }
 async function ask(ev) {
@@ -518,11 +537,52 @@ async function loadGraph() {
   $("graph").append(s);
 }
 
+/* Truy vấn nhiều bước */
+const KGCOLS = {
+  drug_review: [["drug", "Thuốc"], ["relation", "Quan hệ"], ["condition", "Bệnh lý nền"], ["note", "Ghi chú"], ["alternative", "Thay bằng"], ["why", "Lý do"]],
+  suggested_diseases: [["measurement", "Chỉ số"], ["value", "Giá trị"], ["unit", "Đơn vị"], ["rule", "Ngưỡng"], ["disease", "Gợi ý bệnh"]],
+  risk_profile: [["disease", "Bệnh"], ["risk_factors", "Yếu tố nguy cơ"]],
+  complication_advice: [["complication", "Biến chứng"], ["recommendations", "Khuyến nghị"]],
+  symptom_advice: [["disease", "Bệnh"], ["severity", "Mức"], ["recommendations", "Khuyến nghị"]],
+};
+function kgTable(name, desc, cypher, rows) {
+  const cols = KGCOLS[name];
+  const show = v => Array.isArray(v) ? v.join("; ") : (v === null || v === undefined ? "—" : String(v).replace("CONTRAINDICATED_IN", "chống chỉ định").replace("CAUTION_IN", "thận trọng"));
+  return el("div", {class: "sec"}, el("b", null, desc),
+    rows.length ? el("table", null, el("thead", null, el("tr", null, cols.map(c => el("th", null, c[1])))),
+      el("tbody", null, rows.map(r => el("tr", null, cols.map(c => el("td", null, show(r[c[0]]))))))) : el("p", {class: "sub"}, "Không có kết quả."),
+    el("details", null, el("summary", null, "Câu Cypher"), el("pre", {style: "white-space:pre-wrap;font-size:12px"}, cypher)));
+}
+async function kgPatient() {
+  const r = await fetch("/kg/patient/" + encodeURIComponent($("kgp").value)); const j = await r.json();
+  $("kgout").textContent = "";
+  $("kgout").append(el("p", {class: "sub"}, `Chạy trên: ${j.backend}`), ...Object.entries(j.queries).map(([k, q]) => kgTable(k, q.description, q.cypher, q.rows)));
+}
+async function kgSymptom() {
+  if (!$("kgs").value) return;
+  const r = await fetch("/kg/symptom/" + encodeURIComponent($("kgs").value)); const j = await r.json();
+  $("kgout").textContent = "";
+  $("kgout").append(el("p", {class: "sub"}, `Chạy trên: ${j.backend}`), kgTable("symptom_advice", `Triệu chứng "${j.symptom}"`, j.cypher, j.rows));
+}
+let kgDone = false;
+async function loadKg() {
+  if (kgDone) return;
+  const j = await (await fetch("/kg/patients")).json(); kgDone = true;
+  j.patients.forEach(p => $("kgp").append(el("option", {value: p.name}, `${p.name}: ${p.title}`)));
+  j.symptoms.forEach(s => $("kgs").append(el("option", {value: s}, s)));
+  $("kgp").value = "Ca 5"; kgPatient();
+}
+$("kgp").onchange = () => { $("kgs").value = ""; kgPatient(); };
+$("kgs").onchange = kgSymptom;
+
 /* Khởi tạo */
 function setTab(a) {
   $("tab-a").setAttribute("aria-selected", a); $("tab-g").setAttribute("aria-selected", !a);
   $("view-a").hidden = !a; $("view-g").hidden = a;
-  if (!a) loadGraph().catch(() => { $("gmeta").textContent = "Không tải được đồ thị."; });
+  if (!a) {
+    loadGraph().catch(() => { $("gmeta").textContent = "Không tải được đồ thị."; });
+    loadKg().catch(() => { $("kgmeta").textContent = "Không tải được truy vấn đồ thị."; });
+  }
 }
 $("tab-a").onclick = () => setTab(true);
 $("tab-g").onclick = () => setTab(false);
@@ -535,11 +595,9 @@ $("close").onclick = () => { $("chat").hidden = true; $("fab").hidden = false; }
 $("reset").onclick = greet;
 $("askf").addEventListener("submit", ask);
 greet();
-let LLM_ON = false;
 fetch("/health").then(r => r.json()).then(h => {
-  LLM_ON = h.llm;
   const chip = (k, v) => el("span", {class: "chip"}, k + " ", el("b", null, v));
-  $("status").append(chip("Tri thức", h.kb), chip("Học sâu", h.dl), chip("LLM", h.llm ? "bật" : "tắt"));
+  $("status").append(chip("Tri thức", h.kb), chip("RAG", `${h.rag}, ${h.retriever}`), chip("LLM", h.llm), chip("Học sâu", h.dl));
 });
 fetch("/scenarios").then(r => r.json()).then(s => {
   SC = s;

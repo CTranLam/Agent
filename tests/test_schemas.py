@@ -19,4 +19,4 @@ def test_context_shortcuts():
     assert (ctx.glucose, ctx.n_readings, ctx.forecast_min, ctx.diabetes_type) == (90.0, 2, 75.0, "T2")
 
 def test_report_to_dict_is_json_safe():
-    json.dumps(Report("thường quy", [], {}, {}, {}, [], [], None, None, [], "d").to_dict())
+    json.dumps(Report("thường quy", [], {}, {}, {}, [], [], [], "d").to_dict())

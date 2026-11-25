@@ -8,25 +8,21 @@
  {
   "q": "đường huyết bao nhiêu thì gọi là hạ",
   "gold": [
-   "Phân mức hạ đường huyết"
+   "Ngưỡng hạ đường huyết",
+   "Phân mức độ hạ đường huyết"
   ]
  },
  {
   "q": "run tay vã mồ hôi có phải thiếu đường không",
   "gold": [
-   "Triệu chứng hạ đường huyết"
+   "Triệu chứng hạ đường huyết",
+   "Nhận biết sớm hạ đường huyết khi tiêm insulin"
   ]
  },
  {
   "q": "uống rượu có sao không",
   "gold": [
    "Rượu bia và hạ đường huyết"
-  ]
- },
- {
-  "q": "có nên lái xe khi đường thấp",
-  "gold": [
-   "Lái xe và hạ đường huyết"
   ]
  },
  {
@@ -37,21 +33,22 @@
   ]
  },
  {
-  "q": "khi nào cần thử ceton",
+  "q": "nhiễm toan ceton có dấu hiệu gì",
   "gold": [
-   "Kiểm tra ceton khi đường huyết cao"
+   "Nhiễm toan ceton khi đường huyết cao"
   ]
  },
  {
-  "q": "HbA1c bao nhiêu là bị tiểu đường",
+  "q": "HbA1c bao nhiêu là tiền tiểu đường",
   "gold": [
-   "Tiêu chuẩn chẩn đoán đái tháo đường"
+   "Tiêu chuẩn chẩn đoán tiền đái tháo đường"
   ]
  },
  {
-  "q": "TIR mục tiêu là bao nhiêu phần trăm",
+  "q": "đường huyết mục tiêu là bao nhiêu",
   "gold": [
-   "Mục tiêu thời gian trong khoảng"
+   "Mục tiêu đường huyết",
+   "Mục tiêu điều trị ở người trưởng thành không mang thai"
   ]
  },
  {
@@ -62,9 +59,9 @@
   ]
  },
  {
-  "q": "có được uống trà sữa không",
+  "q": "nên hạn chế trái cây gì",
   "gold": [
-   "Hạn chế đường tự do"
+   "Hạn chế trái cây nhiều đường"
   ]
  },
  {
@@ -82,13 +79,15 @@
  {
   "q": "béo phì có cần giảm cân không",
   "gold": [
-   "Giảm cân khi thừa cân"
+   "Giảm cân khi thừa cân",
+   "Giảm cân ở người thừa cân, béo phì"
   ]
  },
  {
   "q": "mỗi tuần tập thể dục bao lâu",
   "gold": [
-   "Mức vận động khuyến nghị"
+   "Mức vận động khuyến nghị",
+   "Lượng vận động khuyến cáo mỗi tuần"
   ]
  },
  {
@@ -98,9 +97,9 @@
   ]
  },
  {
-  "q": "bị bệnh tim có tập được không",
+  "q": "đau bàn chân thì tập gì",
   "gold": [
-   "Vận động khi có bệnh tim mạch"
+   "Vận động khi có vấn đề bàn chân"
   ]
  },
  {
@@ -122,21 +121,15 @@
   ]
  },
  {
-  "q": "tự đổi thuốc được không",
-  "gold": [
-   "Không tự ý đổi thuốc"
-  ]
- },
- {
   "q": "vừa chích insulin xong có chích thêm được không",
   "gold": [
    "An toàn khi dùng insulin"
   ]
  },
  {
-  "q": "đếm carb để tính liều như thế nào",
+  "q": "mỗi ngày ăn bao nhiêu carb",
   "gold": [
-   "Đếm carbohydrate và liều bữa ăn"
+   "Lượng carbohydrate mỗi ngày"
   ]
  },
  {
@@ -148,7 +141,8 @@
  {
   "q": "bao lâu khám mắt một lần",
   "gold": [
-   "Tầm soát biến chứng mắt"
+   "Tầm soát biến chứng mắt",
+   "Lịch khám mắt"
   ]
  },
  {

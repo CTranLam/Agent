@@ -1,17 +1,19 @@
+"""Rà soát thuốc (rule + KB) và điều phối liều insulin: RLAgent đề xuất -> RuleAgent quyết định."""
 import re
 
-from ..policy.safety_rules import apply_safety, cap_total_bolus, check_meal_bolus
 from ..schemas import AgentResult, Alert, AnalysisContext
 from .base import BaseAgent
 from .conditions import evaluate
+from .rl_agent import RLAgent
+from .rule_agent import RuleAgent
 
 
 class MedicationAgent(BaseAgent):
-    name = "Thuốc & insulin"
+    name, kind = "MedicationAgent", "RL + Rule + KB"
 
     def __init__(self, kb, rag, policy):
         super().__init__(kb, rag)
-        self.policy = policy
+        self.rl, self.rule = RLAgent(policy), RuleAgent()
 
     def _review(self, ctx: AnalysisContext):
         p, dtype = ctx.profile, ctx.diabetes_type
@@ -51,27 +53,22 @@ class MedicationAgent(BaseAgent):
         return alerts, actions, names, unknown
 
     def run(self, ctx: AnalysisContext) -> AgentResult:
-        p, g, dtype = ctx.profile, ctx.glucose, ctx.diabetes_type
+        p, dtype = ctx.profile, ctx.diabetes_type
         alerts, actions, names, unknown = self._review(ctx)
         correction, meal = 0.0, 0.0
-        proposed, iob, rules, notes, blocked_reason = None, None, [], [], None
+        proposed, rl_state, iob, rules, notes, blocked_reason = None, None, None, [], [], None
 
         if ctx.shared.get("review_only"):
             correction, meal = None, None
             actions.append("Chế độ khẩn cấp: hệ thống KHÔNG đề xuất bất kỳ liều insulin nào - xử trí theo hướng dẫn khẩn cấp và liên hệ y tế.")
         elif p.on_insulin and dtype in ("T1", "T2"):
-            proposed = self.policy.suggest(g, ctx.forecast["trend_per_5min"], p.isf) if p.isf else 0.0
-            dec = apply_safety(p, g, ctx.forecast_min, proposed, ctx.minutes_since_insulin, dtype,
-                               n_readings=ctx.n_readings, reading_age_min=ctx.reading_age_min,
-                               last_insulin_units=ctx.last_insulin_units)
-            correction, iob, rules = dec.dose, dec.iob, dec.rules_fired
-            if dec.blocked:  # không hiện số RL đề xuất cho ca đã bị chặn
-                proposed, blocked_reason = None, rules[0]
+            proposed, rl_state = self.rl.propose(ctx), self.rl.state(ctx)
+            dec = self.rule.decide(ctx, proposed)
+            correction, meal, iob, rules, notes = dec.correction, dec.meal, dec.iob, dec.rules_fired, dec.notes
+            blocked_reason = dec.blocked_reason
+            if blocked_reason:  # không hiện số RL đề xuất cho ca đã bị chặn
+                proposed = rl_state = None
             alerts += [Alert(a.level, a.message, self.name) for a in dec.alerts]
-            # CHỈ lấy carb người dùng nhập; không suy ra từ thực đơn gợi ý
-            meal, notes = check_meal_bolus(p, g, ctx.forecast_min, ctx.planned_carbs, reading_age_min=ctx.reading_age_min)
-            correction, meal, cap_notes = cap_total_bolus(correction, meal)
-            notes = notes + cap_notes
             actions += notes
             if correction > 0:
                 actions.append(f"Liều bù tham khảo: {correction:g} đv (RL đề xuất {proposed:g} đv, sau rule an toàn).")
@@ -79,7 +76,7 @@ class MedicationAgent(BaseAgent):
                 actions.append(f"Liều bữa ăn tham khảo: {meal:g} đv ({ctx.planned_carbs:g} g carb / ICR {p.icr:g}).")
         actions.append("Không tự ý đổi hoặc ngừng thuốc; mọi gợi ý chỉ để trao đổi với bác sĩ, dược sĩ.")
 
-        details = {"drugs": names, "unknown_drugs": unknown, "proposed": proposed, "blocked_reason": blocked_reason, "correction": correction,
+        details = {"drugs": names, "unknown_drugs": unknown, "proposed": proposed, "rl": rl_state, "blocked_reason": blocked_reason, "correction": correction,
                    "meal": meal, "iob": iob, "rules_fired": rules, "notes": notes}
         summary = f"Rà soát {len(names)} thuốc" + (f", {len(unknown)} thuốc chưa nhận ra" if unknown else "") + "."
         if correction is None:

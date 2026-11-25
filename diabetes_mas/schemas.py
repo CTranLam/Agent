@@ -42,6 +42,7 @@ class Evidence:
     title: str
     text: str
     score: float = 0.0
+    url: str = ""
 
 
 @dataclass
@@ -59,6 +60,7 @@ class AgentResult:
     actions: list[str] = field(default_factory=list)
     alerts: list[Alert] = field(default_factory=list)
     evidence: list[Evidence] = field(default_factory=list)
+    kind: str = ""
 
 
 @dataclass
@@ -103,25 +105,9 @@ class Report:
     results: dict[str, AgentResult]
     alerts: list[Alert]
     audit_findings: list[str]
-    synthesis: str | None
-    synthesis_note: str | None
     sources: list[str]
     disclaimer: str
     readings: list[float] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return asdict(self)
-
-    def to_text(self) -> str:
-        lines = [f"KẾ HOẠCH: {self.plan} ({' -> '.join(self.steps)})",
-                 f"PHÂN LOẠI: {self.classification.get('class_name', '')}"]
-        lines += [f"[{a.level.upper()}] {a.message}" for a in self.alerts]
-        for key, r in self.results.items():
-            lines.append(f"\n== {r.agent}: {r.summary}")
-            lines += [f"  - {x}" for x in r.actions]
-        if self.audit_findings:
-            lines += ["\nAUDITOR ĐÃ CAN THIỆP:"] + [f"  - {x}" for x in self.audit_findings]
-        if self.synthesis:
-            lines += ["\nTỔNG HỢP:", self.synthesis]
-        lines += ["\nNGUỒN:"] + [f"  - {s}" for s in self.sources] + ["", self.disclaimer]
-        return "\n".join(lines)

@@ -8,7 +8,6 @@ from diabetes_mas.agents.nutrition_agent import NutritionAgent
 from diabetes_mas.agents.orchestrator import Orchestrator
 from diabetes_mas.api import create_app
 from diabetes_mas.dl.decision import classify_with_prob
-from diabetes_mas.guardrail import is_grounded
 from diabetes_mas.kb.rag import RAG
 from diabetes_mas.kb.store import load_kb
 from diabetes_mas.policy.safety_rules import apply_safety, check_meal_bolus
@@ -25,12 +24,8 @@ class Fixed:
     def __init__(self, dose=2.0): self.dose = dose
     def suggest(self, g, t, i): return self.dose
 
-class FakeLLM:
-    enabled = True; last_error = None
-    def complete(self, s, u): return "Tiếp tục theo dõi."
-
 def med(): return MedicationAgent(kb, rag, Fixed())
-def orch(**k): return Orchestrator(FakePredictor(), kb, rag, Fixed(), **k)
+def orch(): return Orchestrator(FakePredictor(), kb, rag, Fixed())
 def client(): return TestClient(create_app(orch(), rag))
 def ctx(p=None, readings=None, code="T2", carbs=None, **kw):
     r = readings or flat(120)
@@ -122,20 +117,6 @@ def test_more_off_topic_returns_nothing(q):
 @pytest.mark.parametrize("q", ["tụt đường phải làm sao", "đường huyết thấp phải làm sao", "hạ đường huyết"])
 def test_hypo_questions_surface_treatment(q):
     assert any("15-15" in e.title for e in rag.retrieve(q))
-
-
-# I6: guardrail
-SRC = "Không đề xuất liều. Đo lại sau 30 phút, dùng 15 g carbohydrate."
-@pytest.mark.parametrize("t", ["Hãy tiêm 30 đv insulin ngay", "Tiêm 8 units insulin", "Tiêm 8 IU", "tiêm 8U", "Tiêm tám đơn vị", "Uống 2 viên gliclazide", "Dùng liều 7"])
-def test_guardrail_rejects_invented_doses(t):
-    assert not is_grounded(t, SRC)[0]
-
-def test_guardrail_accepts_same_pair_and_list_markers():
-    assert is_grounded("1. Đo lại sau 30 phút\n2. Dùng 15 g carbohydrate", SRC)[0]
-
-def test_emergency_skips_llm():
-    r = orch(llm=FakeLLM()).analyze(PatientProfile(), flat(48))
-    assert r.synthesis is None and "khẩn cấp" in r.synthesis_note.lower()
 
 
 # I7: ngưỡng sàng lọc không phải chẩn đoán

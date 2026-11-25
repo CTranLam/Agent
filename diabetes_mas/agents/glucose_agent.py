@@ -7,14 +7,14 @@ from .base import BaseAgent
 
 
 class GlucoseAgent(BaseAgent):
-    name = "Đường huyết"
+    name, kind = "GlucoseAgent", "Deep learning + Rule"
 
     def run(self, ctx: AnalysisContext) -> AgentResult:
         p, g, r = ctx.profile, ctx.glucose, np.asarray(ctx.readings, dtype=float)
         n = ctx.n_readings
         reliable = n >= C.MIN_READINGS_FOR_STATS  # với 1-2 số đo, "TIR 100%" là ảo tưởng
         details = {
-            "current": round(g, 1), "mean": round(float(r.mean()), 1), "sd": round(float(r.std()), 1),
+            "current": round(g, 1),
             "cv_pct": round(float(r.std() / r.mean() * 100), 1) if reliable else None,
             "tir_pct": round(float(((r >= 70) & (r <= 180)).mean() * 100), 1) if reliable else None,
             "tbr_pct": round(float((r < 70).mean() * 100), 1) if reliable else None,

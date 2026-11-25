@@ -29,11 +29,11 @@ def carb_per_meal(p: PatientProfile, dtype: str) -> tuple[float, dict]:
     daily = kcal * C.CARB_SHARE / 4
     lo = 45.0 if (p.age >= 75 or p.bmi < 18.5 or p.pregnant) else 30.0
     per = max(lo, min(60.0, round((daily - C.SNACK_CARB_G) / 3 / 5) * 5))
-    return per, {"energy_kcal": kcal, "energy_note": note, "daily_carb_g": round(daily)}
+    return per, {"energy_kcal": kcal, "energy_note": note}
 
 
 class NutritionAgent(BaseAgent):
-    name = "Dinh dưỡng"
+    name, kind = "NutritionAgent", "Rule + KB"
 
     def _banned(self, allergy: str) -> set[str]:
         """Dị ứng người dùng gõ -> các chất gây dị ứng trong KB ("trứng gà" -> trứng, "hải sản" -> tôm, cá)."""

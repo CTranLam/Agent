@@ -1,4 +1,4 @@
-"""Web/sách -> KB: nạp khuyến nghị từ knowledge_docs/*.md và dữ liệu có quan hệ từ JSON."""
+"""Web/PDF -> KB: nạp khuyến nghị từ knowledge_docs/*.md và dữ liệu có quan hệ từ JSON."""
 import json
 import re
 import unicodedata
@@ -7,6 +7,8 @@ from pathlib import Path
 
 HERE = Path(__file__).parent
 DOCS = HERE.parent.parent / "knowledge_docs"
+CYPHER_FILE = HERE.parent.parent / "exports" / "kb_neo4j.cypher"
+CYPHER_HEADER = "// diabetes_mas KB export v1"
 
 
 def fold(s: str) -> str:
@@ -19,9 +21,9 @@ def parse_docs(text: str) -> list[dict]:
     out = []
     for block in re.split(r"^## ", text, flags=re.M)[1:]:
         title, *rest = block.strip().splitlines()
-        meta = {k: v.strip() for k, v in (ln.split(":", 1) for ln in rest[:2])}
-        out.append({"title": title.strip(), "source": meta["source"], "topic": meta["topic"],
-                    "text": " ".join(rest[2:]).strip()})
+        meta = {k: v.strip() for k, v in (ln.split(":", 1) for ln in rest[:3])}
+        out.append({"title": title.strip(), "source": meta["source"], "url": meta["url"], "topic": meta["topic"],
+                    "text": " ".join(rest[3:]).strip()})
     return out
 
 
@@ -55,5 +57,5 @@ def load_kb(docs_dir: Path = DOCS) -> KnowledgeBase:
     d = json.loads((HERE / "drugs.json").read_text(encoding="utf-8"))
     foods = json.loads((HERE / "foods.json").read_text(encoding="utf-8"))
     return KnowledgeBase(recs, foods, d["drugs"], d["interactions"], d["substitutes"],
-                         {"reviewed": False, "note": "Tóm tắt giáo dục, chưa được bác sĩ/dược sĩ thẩm định; "
-                                                     "carb thực phẩm là ước lượng theo khẩu phần."})
+                         {"backend": "bộ nhớ", "reviewed": False, "note": "Khuyến nghị tóm tắt từ bài viết Vinmec và trích từ PDF QĐ 5481/QĐ-BYT của Bộ Y tế, chưa được bác sĩ/dược sĩ thẩm định; "
+                                                     "thực phẩm, tương tác và thuốc thay thế là ước lượng riêng của đồ án."})

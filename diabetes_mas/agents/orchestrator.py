@@ -1,19 +1,14 @@
-"""Agent điều phối: lập kế hoạch theo tình trạng, gọi agent, gọi Auditor, tổng hợp báo cáo."""
-import json
+"""Orchestrator (điều phối): lập kế hoạch theo tình trạng, gọi agent, gọi Auditor, tổng hợp báo cáo."""
 import math
 
 from .. import config as C
-from ..guardrail import is_grounded
 from ..schemas import LEVEL_ORDER, AnalysisContext, Report
 from .auditor import audit
+from .diagnosis_agent import DiagnosisAgent
 from .exercise_agent import ExerciseAgent
 from .glucose_agent import GlucoseAgent
 from .medication_agent import MedicationAgent
 from .nutrition_agent import NutritionAgent
-
-
-SYNTH_SYSTEM = ("Viết bản tư vấn ngắn bằng tiếng Việt cho người bệnh từ dữ liệu JSON của các agent. Chỉ diễn đạt lại, "
-                "không thêm con số, liều hay thuốc mới; không bỏ cảnh báo nào.")
 
 
 def validate_readings(readings, unit_confirmed: bool = False) -> None:
@@ -29,9 +24,9 @@ def validate_readings(readings, unit_confirmed: bool = False) -> None:
 
 
 class Orchestrator:
-    def __init__(self, predictor, kb, rag, policy, llm=None):
-        self.predictor, self.kb, self.rag, self.llm = predictor, kb, rag, llm
-        self.agents = {"glucose": GlucoseAgent(kb, rag), "nutrition": NutritionAgent(kb, rag),
+    def __init__(self, predictor, kb, rag, policy):
+        self.predictor, self.kb, self.rag = predictor, kb, rag
+        self.agents = {"diagnosis": DiagnosisAgent(kb, rag), "glucose": GlucoseAgent(kb, rag), "nutrition": NutritionAgent(kb, rag),
                        "medication": MedicationAgent(kb, rag, policy), "exercise": ExerciseAgent(kb, rag)}
 
     def plan(self, ctx: AnalysisContext) -> tuple[str, list[str]]:
@@ -40,8 +35,8 @@ class Orchestrator:
             ctx.shared["review_only"] = True
             kind = "hạ đường huyết nặng" if ctx.glucose < C.HYPO_L2 else "tăng đường huyết rất cao"
             # vẫn rà soát thuốc: sulfonylurea trên nền suy thận là nguyên nhân hạ đường huyết hay gặp
-            return f"KHẨN CẤP ({kind})", ["glucose"] + (["medication"] if has_meds else [])
-        steps = ["glucose", "nutrition"]
+            return f"KHẨN CẤP ({kind})", ["diagnosis", "glucose"] + (["medication"] if has_meds else [])
+        steps = ["diagnosis", "glucose", "nutrition"]
         if has_meds:
             steps.append("medication")
         return "Thường quy", steps + ["exercise"]
@@ -54,6 +49,8 @@ class Orchestrator:
                               planned_carbs, minutes_since_insulin, last_insulin_units, reading_age_min, meal_type)
         plan, steps = self.plan(ctx)
         results = {s: self.agents[s].run(ctx) for s in steps}
+        for s, r in results.items():
+            r.kind = self.agents[s].kind
         findings = audit(ctx, results)
 
         seen, alerts = set(), []
@@ -63,25 +60,6 @@ class Orchestrator:
                     seen.add(a.message)
                     alerts.append(a)
         alerts.sort(key=lambda a: LEVEL_ORDER[a.level])
-        sources = sorted({f"{e.source}: {e.title}" for r in results.values() for e in r.evidence})
-        report = Report(plan, steps, ctx.classification, ctx.forecast, results, alerts,
-                        [f"{f.rule}: {f.message}" for f in findings], None, None, sources, C.DISCLAIMER, readings)
-        report.synthesis, report.synthesis_note = self._synthesize(report)
-        return report
-
-    def _synthesize(self, rep: Report) -> tuple[str | None, str | None]:
-        if rep.plan.startswith("KHẨN"):
-            return None, "Chế độ khẩn cấp: không dùng LLM, chỉ hiển thị hướng dẫn của các agent."
-        if self.llm is None or not self.llm.enabled:
-            return None, "Chưa cấu hình LLM (ANTHROPIC_API_KEY): hiển thị báo cáo của các agent."
-        src = json.dumps({"phan_loai": rep.classification["class_name"], "nguy_co": rep.classification["risk_level"],
-                          "canh_bao": [a.message for a in rep.alerts],
-                          "agents": {k: {"tom_tat": r.summary, "viec_can_lam": r.actions} for k, r in rep.results.items()}},
-                         ensure_ascii=False)
-        text = self.llm.complete(SYNTH_SYSTEM, src)
-        if not text:
-            return None, f"LLM lỗi ({self.llm.last_error}): dùng báo cáo của các agent."
-        ok, bad = is_grounded(text, src)
-        if not ok:
-            return None, f"Đã loại bản tổng hợp LLM vì chứa số liệu ngoài dữ liệu của agent ({', '.join(bad)})."
-        return text, None
+        sources = sorted({f"{e.source} ({e.url})" for r in results.values() for e in r.evidence})
+        return Report(plan, steps, ctx.classification, ctx.forecast, results, alerts,
+                      [f"{f.rule}: {f.message}" for f in findings], sources, C.DISCLAIMER, readings)

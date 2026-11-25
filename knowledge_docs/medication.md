@@ -1,24 +1,23 @@
 ## Metformin và chức năng thận
-source: ADA Standards of Care
+source: Vinmec - Công dụng thuốc Glucophage 750mg
+url: https://www.vinmec.com/vie/bai-viet/cong-dung-thuoc-glucophage-750mg-vi
 topic: medication
-Metformin chống chỉ định khi eGFR dưới 30. Không nên khởi trị khi eGFR 30-45 và cần cân nhắc giảm liều nếu eGFR giảm xuống dưới 45. Nên theo dõi vitamin B12 khi dùng lâu dài.
+Cần đánh giá chức năng thận trước khi dùng metformin. eGFR dưới 30 mL/phút/1,73 m2 thì không nên dùng; eGFR 60-89 có thể xem xét giảm liều. Thuốc có thể làm giảm vitamin B12.
 
 ## Sulfonylurea và nguy cơ hạ đường huyết
-source: ADA Standards of Care
+source: Vinmec - Thận trọng với các thuốc điều trị đái tháo đường
+url: https://www.vinmec.com/vie/bai-viet/trong-voi-cac-thuoc-dieu-tri-dai-thao-duong-vi
 topic: medication
-Gliclazide và các sulfonylurea có thể gây hạ đường huyết, nhất là ở người cao tuổi, suy thận hoặc ăn uống thất thường. Cần thận trọng và cân nhắc thuốc ít gây hạ đường huyết hơn.
+Nhóm có nguy cơ hạ đường huyết cao gồm sulfonylurea (như gliclazide), glinide và insulin.
 
 ## Thuốc khi có suy tim
-source: ADA Standards of Care
+source: Vinmec - Các loại thuốc điều trị làm tăng nguy cơ suy tim thường gặp
+url: https://www.vinmec.com/vie/bai-viet/cac-loai-thuoc-dieu-tri-lam-tang-nguy-co-suy-tim-thuong-gap-vi
 topic: medication
-Pioglitazone không dùng cho người suy tim do gây giữ nước. Thuốc ức chế SGLT2 như empagliflozin được ưu tiên khi có suy tim. Việc đổi thuốc do bác sĩ quyết định.
+Pioglitazone có thể gây giữ nước và tăng cân ở người suy tim. Các thuốc ức chế DPP-4 như sitagliptin, linagliptin dường như cũng có thể làm người suy tim rơi vào tình trạng nguy hiểm, cần bác sĩ theo dõi.
 
 ## Thuốc GLP-1 và lưu ý
-source: ADA Standards of Care
+source: Vinmec - Các nhóm thuốc điều trị tiểu đường type 2
+url: https://www.vinmec.com/vie/bai-viet/cac-nhom-thuoc-dieu-tri-tieu-duong-type-2-vi
 topic: medication
-Liraglutide và các thuốc đồng vận GLP-1 không dùng khi có tiền sử ung thư tuyến giáp thể tủy hoặc MEN2, thận trọng khi có tiền sử viêm tụy. Có thể gây buồn nôn lúc mới dùng.
-
-## Không tự ý đổi thuốc
-source: Bộ Y tế - Hướng dẫn chẩn đoán và điều trị đái tháo đường típ 2
-topic: medication
-Người bệnh không tự ý ngừng, đổi hoặc chỉnh liều thuốc. Mọi gợi ý thuốc thay thế chỉ để trao đổi với bác sĩ hoặc dược sĩ.
+Thuốc đồng vận GLP-1 có thể gây buồn nôn, nôn, viêm tụy cấp. Không dùng khi có tiền sử gia đình mắc ung thư giáp dạng tủy hoặc đa u tuyến nội tiết loại 2.

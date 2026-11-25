@@ -1,24 +1,35 @@
 ## Xử trí tăng đường huyết
-source: ADA Standards of Care
+source: Vinmec - Cách xử trí tăng đường huyết
+url: https://www.vinmec.com/vie/bai-viet/cach-xu-tri-tang-duong-huyet-vi
 topic: hyperglycemia
-Khi đường huyết cao kéo dài cần uống đủ nước, kiểm tra thuốc đã dùng đúng chưa, tìm nguyên nhân như nhiễm trùng hoặc bỏ thuốc, đo lại thường xuyên và liên hệ nhóm điều trị nếu không giảm.
+Đường huyết trên 250-300 mg/dL là mức báo động, người bệnh có thể mệt mỏi, khát nước, tiểu nhiều, mắt mờ. Khi đường huyết quá cao cần liên hệ ngay bác sĩ hoặc đến cơ sở y tế gần nhất.
 
-## Kiểm tra ceton khi đường huyết cao
-source: ADA Standards of Care
+## Nhiễm toan ceton khi đường huyết cao
+source: Vinmec - Một số trường hợp khẩn cấp liên quan đến bệnh tiểu đường
+url: https://www.vinmec.com/vie/bai-viet/mot-so-truong-hop-khan-cap-lien-quan-den-benh-tieu-duong-vi
 topic: hyperglycemia
-Người dùng insulin hoặc đái tháo đường type 1 có đường huyết trên 250 mg/dL nên kiểm tra ceton trong máu hoặc nước tiểu. Có ceton kèm buồn nôn, đau bụng, thở nhanh là dấu hiệu nhiễm toan ceton, cần đi cấp cứu.
+Nhiễm toan ceton là tình trạng cấp cứu khi thiếu insulin khiến gan phân hủy chất béo thành ceton. Dấu hiệu gồm buồn nôn, nôn hoặc đau bụng.
 
 ## Dấu hiệu cấp cứu của tăng đường huyết
-source: ADA Standards of Care
+source: Vinmec - Nhiễm toan Ceton là gì?
+url: https://www.vinmec.com/vie/bai-viet/nhiem-toan-ceton-la-gi-vi
 topic: hyperglycemia
-Đường huyết rất cao kèm khát nhiều, tiểu nhiều, mất nước, lơ mơ hoặc nôn ói có thể là nhiễm toan ceton hoặc tăng áp lực thẩm thấu. Cần đến cơ sở y tế ngay, không tự tiêm thêm insulin liều lớn.
+Nhiễm toan ceton có đường huyết trên 250 mg/dL kèm lơ mơ hoặc hôn mê, buồn nôn, nôn, đau bụng, thở nhanh sâu và hơi thở mùi táo thối.
 
-## Tiêu chuẩn chẩn đoán đái tháo đường
-source: ADA Standards of Care
+## Tăng áp lực thẩm thấu
+source: Vinmec - Một số trường hợp khẩn cấp liên quan đến bệnh tiểu đường
+url: https://www.vinmec.com/vie/bai-viet/mot-so-truong-hop-khan-cap-lien-quan-den-benh-tieu-duong-vi
 topic: hyperglycemia
-Đái tháo đường khi HbA1c từ 6,5% trở lên, đường huyết đói từ 126 mg/dL trở lên, hoặc đường huyết 2 giờ sau nghiệm pháp từ 200 mg/dL trở lên. Tiền đái tháo đường khi HbA1c 5,7-6,4% hoặc đường huyết đói 100-125 mg/dL. Khi không có triệu chứng rõ cần xét nghiệm lại để xác nhận.
+Tăng áp lực thẩm thấu là biến chứng của tiểu đường tuýp 2 với đường huyết rất cao, trên 600 mg/dL. Tình trạng này ít gặp hơn nhiễm toan ceton nhưng nguy hiểm hơn.
 
-## Mục tiêu thời gian trong khoảng
-source: Đồng thuận quốc tế về Time in Range (Battelino và cộng sự, 2019)
+## Tiêu chuẩn chẩn đoán tiền đái tháo đường
+source: Vinmec - Dấu hiệu và tiêu chuẩn chẩn đoán tiền tiểu đường
+url: https://www.vinmec.com/vie/bai-viet/dau-hieu-va-tieu-chuan-chan-doan-tien-tieu-duong-vi
 topic: hyperglycemia
-Với phần lớn người lớn dùng CGM: thời gian trong khoảng 70-180 mg/dL trên 70%, dưới 70 mg/dL ít hơn 4%, dưới 54 mg/dL ít hơn 1%, trên 180 mg/dL ít hơn 25%, hệ số biến thiên không quá 36%.
+HbA1c (A1c) từ 5,7 đến 6,4 phần trăm được chẩn đoán tiền tiểu đường và nên xét nghiệm nhắc lại để xác nhận. Xét nghiệm đường huyết lúc đói cần nhịn ăn tám giờ hoặc qua đêm.
+
+## Mục tiêu đường huyết
+source: Vinmec - Kiểm soát mức đường huyết mục tiêu
+url: https://vinmec.com/vi/tin-tuc/thong-tin-suc-khoe/suc-khoe-tong-quat/kiem-soat-muc-duong-huyet-muc-tieu
+topic: hyperglycemia
+Mục tiêu tham khảo: đường huyết đói 70-130 mg/dl, sau ăn 1-2 giờ dưới 180 mg/dl, lúc đi ngủ 110-150 mg/dl. HbA1c dưới 6,5% và xét nghiệm 2-4 lần mỗi năm.

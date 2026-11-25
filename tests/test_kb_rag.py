@@ -1,3 +1,5 @@
+import re
+
 import pytest
 from diabetes_mas.kb.rag import RAG
 from diabetes_mas.kb.store import load_kb
@@ -47,3 +49,23 @@ def test_kb_not_marked_reviewed():
 @pytest.mark.parametrize("q", ["đếm carb để tính liều", "ăn mặn có hại không", "đường 300 có được tập không"])
 def test_short_domain_words_not_filtered(q):
     assert RAG(load_kb()).retrieve(q)
+
+def test_every_recommendation_links_to_vinmec_or_pdf():
+    seen = set()
+    for r in load_kb().recommendations:
+        assert r["title"] not in seen and r["text"], r["title"]
+        seen.add(r["title"])
+        if r["source"].startswith("Bộ Y tế - "):
+            assert re.search(r"\.pdf#page=\d+$", r["url"]) and r["url"].startswith("https://canhgiacduoc.org.vn/"), r["title"]
+        else:
+            assert r["source"].startswith("Vinmec - "), r["title"]
+            assert r["url"].startswith(("https://www.vinmec.com/", "https://vinmec.com/")), r["title"]
+
+def test_evidence_carries_url():
+    assert RAG(load_kb()).retrieve("tụt đường")[0].url.startswith("https://")
+
+def test_dpp4_not_suggested_for_heart_failure():
+    kb = load_kb()
+    assert not [x for x in kb.substitutes if x["condition"] == "heart_failure" and x["alternative"] in ("sitagliptin", "linagliptin")]
+    for name in ("sitagliptin", "linagliptin"):
+        assert "heart_failure" in next(d for d in kb.drugs if d["name"] == name)["cautions"]

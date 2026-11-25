@@ -9,7 +9,6 @@ from ..schemas import Alert, PatientProfile
 @dataclass
 class SafetyDecision:
     dose: float
-    proposed: float
     iob: float | None = None
     blocked: bool = False
     rules_fired: list[str] = field(default_factory=list)
@@ -34,7 +33,7 @@ def iob_fraction(minutes: float, dia: float = C.INSULIN_ACTION_MIN) -> float:
 def apply_safety(profile: PatientProfile, glucose: float, forecast_min: float, proposed: float,
                  minutes_since_insulin: float | None, dtype: str, *, n_readings: int | None = None,
                  reading_age_min: float | None = None, last_insulin_units: float | None = None) -> SafetyDecision:
-    d = SafetyDecision(dose=proposed, proposed=proposed)
+    d = SafetyDecision(dose=proposed)
 
     def block(rule: str, level: str | None = None, msg: str | None = None):
         d.blocked, d.dose = True, 0.0

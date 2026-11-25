@@ -1,0 +1,64 @@
+{
+  "note": "Lược đồ lâm sàng của đồ án để minh hoạ Knowledge Graph: bệnh, triệu chứng, yếu tố nguy cơ, chỉ số đo. Triệu chứng lấy từ các đoạn tóm tắt Vinmec trong knowledge_docs; ngưỡng chẩn đoán theo ADA như trong dl/decision.py. Chưa được bác sĩ thẩm định. Bệnh nhân là các ca mẫu giả lập trong scenarios.py, không phải người thật.",
+  "diseases": [
+    {"code": "DM", "name": "Đái tháo đường", "recommendations": ["Mục tiêu đường huyết", "Nguyên tắc dinh dưỡng"]},
+    {"code": "T1", "name": "Đái tháo đường type 1", "subtype_of": "DM", "recommendations": ["An toàn khi dùng insulin", "Kỹ thuật tiêm insulin"]},
+    {"code": "T2", "name": "Đái tháo đường type 2", "subtype_of": "DM", "recommendations": ["Giảm cân khi thừa cân", "Lượng carbohydrate mỗi ngày"]},
+    {"code": "GDM", "name": "Đái tháo đường thai kỳ", "subtype_of": "DM", "recommendations": ["Đái tháo đường thai kỳ và mang thai"]},
+    {"code": "PRE", "name": "Tiền đái tháo đường", "recommendations": ["Tiêu chuẩn chẩn đoán tiền đái tháo đường", "Giảm cân khi thừa cân"]},
+    {"code": "HYPO", "name": "Hạ đường huyết", "recommendations": ["Ngưỡng hạ đường huyết", "Xử trí hạ đường huyết theo quy tắc 15-15", "Xử trí khi hạ đường huyết nặng"]},
+    {"code": "HYPER", "name": "Tăng đường huyết", "recommendations": ["Xử trí tăng đường huyết", "Dấu hiệu cấp cứu của tăng đường huyết"]},
+    {"code": "DKA", "name": "Nhiễm toan ceton", "recommendations": ["Nhiễm toan ceton khi đường huyết cao", "Dấu hiệu cấp cứu của tăng đường huyết"]},
+    {"code": "HHS", "name": "Tăng áp lực thẩm thấu", "recommendations": ["Tăng áp lực thẩm thấu"]},
+    {"code": "NEPHRO", "name": "Bệnh thận do đái tháo đường", "recommendations": ["Tầm soát biến chứng thận", "Kiểm soát huyết áp và đường huyết khi có bệnh thận", "Metformin và chức năng thận"]},
+    {"code": "RETINO", "name": "Bệnh võng mạc do đái tháo đường", "recommendations": ["Tầm soát biến chứng mắt"]},
+    {"code": "FOOT", "name": "Biến chứng bàn chân", "recommendations": ["Chăm sóc bàn chân", "Vận động khi có vấn đề bàn chân"]}
+  ],
+  "leads_to": [
+    {"from": "PRE", "to": "T2", "note": "có thể tiến triển nếu không thay đổi lối sống"},
+    {"from": "DM", "to": "HYPO", "note": "khi dùng thuốc hạ đường huyết hoặc insulin"},
+    {"from": "DM", "to": "HYPER", "note": "khi kiểm soát kém"},
+    {"from": "T1", "to": "DKA", "note": "khi thiếu insulin"},
+    {"from": "T2", "to": "HHS", "note": "khi đường huyết rất cao, trên 600 mg/dL"},
+    {"from": "DM", "to": "NEPHRO", "note": "biến chứng mạn tính"},
+    {"from": "DM", "to": "RETINO", "note": "biến chứng mạn tính"},
+    {"from": "DM", "to": "FOOT", "note": "biến chứng mạn tính"}
+  ],
+  "symptoms": [
+    {"disease": "HYPO", "severity": "nhẹ", "names": ["Chóng mặt", "Lo âu", "Đau đầu", "Da xanh tái", "Vã mồ hôi", "Hồi hộp, đánh trống ngực", "Nhịp tim nhanh"]},
+    {"disease": "HYPO", "severity": "nặng", "names": ["Co giật", "Mất ý thức, hôn mê"]},
+    {"disease": "HYPER", "severity": "nhẹ", "names": ["Mệt mỏi", "Khát nước", "Tiểu nhiều", "Mắt mờ"]},
+    {"disease": "DKA", "severity": "nặng", "names": ["Buồn nôn, nôn", "Đau bụng", "Thở nhanh sâu", "Hơi thở mùi táo thối", "Lơ mơ, hôn mê"]}
+  ],
+  "risk_factors": [
+    {"code": "overweight", "name": "Thừa cân, béo phì (BMI ≥ 25)", "increases": ["T2", "PRE"]},
+    {"code": "hypertension", "name": "Tăng huyết áp", "increases": ["T2", "NEPHRO"]},
+    {"code": "heart_disease", "name": "Bệnh tim mạch", "increases": ["T2"]},
+    {"code": "smoking", "name": "Hút thuốc lá (đang hoặc đã từng)", "increases": ["T2", "FOOT"]},
+    {"code": "age_ge_45", "name": "Tuổi từ 45", "increases": ["T2", "PRE"]},
+    {"code": "long_duration", "name": "Mắc đái tháo đường từ 10 năm", "increases": ["NEPHRO", "RETINO", "FOOT"]},
+    {"code": "poor_control", "name": "HbA1c từ 8% (kiểm soát kém)", "increases": ["NEPHRO", "RETINO", "FOOT", "HYPER"]},
+    {"code": "hypo_drug", "name": "Dùng insulin hoặc sulfonylurea", "increases": ["HYPO"]},
+    {"code": "alcohol_fasting", "name": "Uống rượu bia khi đói", "increases": ["HYPO"]},
+    {"code": "strict_diet", "name": "Ăn kiêng quá mức", "increases": ["HYPO"]}
+  ],
+  "measurements": [
+    {"code": "hba1c", "name": "HbA1c", "unit": "%"},
+    {"code": "fpg", "name": "Đường huyết lúc đói", "unit": "mg/dL"},
+    {"code": "glucose", "name": "Đường huyết hiện tại (CGM)", "unit": "mg/dL"},
+    {"code": "egfr", "name": "eGFR", "unit": "mL/phút/1,73m²"},
+    {"code": "bmi", "name": "BMI", "unit": "kg/m²"},
+    {"code": "c_peptide", "name": "C-peptide", "unit": "ng/mL"}
+  ],
+  "indicates": [
+    {"measurement": "hba1c", "disease": "DM", "low": 6.5, "high": null, "rule": "HbA1c ≥ 6,5% (ADA)"},
+    {"measurement": "hba1c", "disease": "PRE", "low": 5.7, "high": 6.5, "rule": "HbA1c 5,7–6,4% (ADA)"},
+    {"measurement": "fpg", "disease": "DM", "low": 126, "high": null, "rule": "Đường huyết đói ≥ 126 mg/dL (ADA)"},
+    {"measurement": "fpg", "disease": "PRE", "low": 100, "high": 126, "rule": "Đường huyết đói 100–125 mg/dL (ADA)"},
+    {"measurement": "glucose", "disease": "HYPO", "low": null, "high": 70, "rule": "Đường huyết < 70 mg/dL"},
+    {"measurement": "glucose", "disease": "HYPER", "low": 250, "high": null, "rule": "Đường huyết ≥ 250 mg/dL, mức báo động"},
+    {"measurement": "glucose", "disease": "HHS", "low": 600, "high": null, "rule": "Đường huyết > 600 mg/dL"},
+    {"measurement": "egfr", "disease": "NEPHRO", "low": null, "high": 60, "rule": "eGFR < 60, gợi ý suy giảm chức năng thận"},
+    {"measurement": "c_peptide", "disease": "T1", "low": null, "high": 0.6, "rule": "C-peptide < 0,6 ng/mL, ủng hộ type 1"}
+  ]
+}

@@ -52,8 +52,17 @@ def build(meta: dict, rag: dict) -> str:
         parts.append("Chưa đo: chạy `python -m diabetes_mas.policy.rl_insulin --eval`.\n")
 
     parts.append("## RAG\n")
-    parts.append(_table(["Bộ truy xuất", "Recall@3", "MRR"], [["Đếm từ trùng", rag["word_overlap"]["recall_at_3"], rag["word_overlap"]["mrr"]],
-                                                            ["BM25 + bigram + đồng nghĩa", rag["bm25"]["recall_at_3"], rag["bm25"]["mrr"]]]))
+    rows = [["Đếm từ trùng", rag["word_overlap"]["recall_at_3"], rag["word_overlap"]["mrr"]],
+            ["BM25 + bigram + đồng nghĩa", rag["bm25"]["recall_at_3"], rag["bm25"]["mrr"]]]
+    if "vector" in rag:
+        rows.append([f"Vector: {rag['vector']['embedder']}, cosine", rag["vector"]["recall_at_3"], rag["vector"]["mrr"]])
+    if "hybrid" in rag:
+        rows.append(["Lai BM25 + vector (RRF)", rag["hybrid"]["recall_at_3"], rag["hybrid"]["mrr"]])
+    parts.append(_table(["Bộ truy xuất", "Recall@3", "MRR"], rows))
+    if "vector" in rag:
+        parts.append("\nHệ thống mặc định dùng BM25 (`RAG_RETRIEVER=bm25`); đổi sang `vector` hoặc `hybrid` qua biến môi trường. "
+                     "Vector LSA học từ chính vài chục đoạn trong KB nên chưa hiểu đồng nghĩa thật; embedding từ mô hình ngôn ngữ "
+                     "(`EMBED_BASE_URL`, `EMBED_MODEL`) sẽ cho số khác, cần đo lại bằng lệnh trên.\n")
     parts.append(f"\n{rag['n_questions']} câu hỏi. **Giới hạn:** {rag['caveat']}\n")
     return "\n".join(parts)
 

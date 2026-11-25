@@ -1,19 +1,23 @@
 ## Tầm soát biến chứng mắt
-source: ADA Standards of Care
+source: Vinmec - Bảo vệ đôi mắt của bạn khi bị tiểu đường
+url: https://www.vinmec.com/vie/bai-viet/bao-ve-doi-mat-cua-ban-khi-bi-tieu-duong-vi
 topic: complications
-Khám đáy mắt khi mới chẩn đoán đái tháo đường type 2 và định kỳ 1-2 năm một lần, hoặc theo chỉ định bác sĩ.
+Người tiểu đường nên khám mắt hàng năm để phát hiện bệnh võng mạc tiểu đường. Cần kiểm soát huyết áp và cholesterol.
 
 ## Tầm soát biến chứng thận
-source: ADA Standards of Care
+source: Vinmec - Biến chứng suy thận ở bệnh nhân tiểu đường
+url: https://www.vinmec.com/vie/bai-viet/bien-chung-suy-o-benh-nhan-tieu-duong-vi
 topic: complications
-Xét nghiệm eGFR và tỷ số albumin/creatinine niệu ít nhất mỗi năm một lần. Kiểm soát huyết áp và đường huyết để làm chậm bệnh thận.
+Giai đoạn đầu của biến chứng thận thường rất mờ nhạt, phần lớn chỉ phát hiện qua xét nghiệm nước tiểu tìm vi đạm niệu hoặc siêu âm bụng.
 
 ## Chăm sóc bàn chân
-source: ADA Standards of Care
+source: Vinmec - Các biến chứng tiểu đường thường gặp
+url: https://www.vinmec.com/vie/bai-viet/cac-bien-chung-tieu-duong-thuong-gap-vi
 topic: complications
-Kiểm tra bàn chân mỗi ngày, đi giày vừa, không đi chân đất. Khám bàn chân ít nhất mỗi năm một lần; đến cơ sở y tế sớm khi có vết loét hoặc nhiễm trùng.
+Biến chứng thần kinh làm giảm nhận biết chấn thương bàn chân, như do giày không vừa, có thể dẫn đến loét và nhiễm trùng. Cần chăm sóc chân thường xuyên.
 
-## Kiểm soát huyết áp và mỡ máu
-source: ADA Standards of Care
+## Kiểm soát huyết áp và đường huyết khi có bệnh thận
+source: Vinmec - Các biến chứng tim mạch trên bệnh nhân tiểu đường
+url: https://www.vinmec.com/vie/bai-viet/cac-bien-chung-tim-mach-tren-benh-nhan-tieu-duong-vi
 topic: complications
-Nhiều người đái tháo đường có mục tiêu huyết áp dưới 130/80 mmHg. Điều trị rối loạn lipid theo nguy cơ tim mạch, ngừng hút thuốc lá.
+Với bệnh thận do đái tháo đường, mục tiêu gồm huyết áp dưới 140/80 mmHg và HbA1c dưới 7% để làm chậm tiến triển đạm niệu, kèm điều trị mỡ máu.
