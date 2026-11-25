@@ -71,7 +71,7 @@ def test_blocked_dose_shows_reason_without_tile(page):  # I1
     page.wait_for_function("document.querySelector('.big').firstChild.textContent === '300'")
     page.wait_for_timeout(100)
     text = page.inner_text(".agents")
-    assert "Không đề xuất liều bù" in text and "Liều bù (RL" not in text
+    assert "Không đề xuất liều bù" in text and "RLAgent đề xuất" not in text and "RuleAgent quyết định: không bù" in text
 
 
 def test_kb_unreviewed_flag_visible(page):  # I13
@@ -80,3 +80,9 @@ def test_kb_unreviewed_flag_visible(page):  # I13
     page.click("#close")
     run_case(page, "1")
     assert "chưa thẩm định" in page.inner_text("#out")
+
+
+def test_diagnosis_card_shown_first(page):
+    run_case(page, "3")
+    assert page.locator(".agents .agent h3").first.inner_text().split() == "DiagnosisAgent Chẩn đoán Deep learning + Rule".split()
+    assert "DiabetesNet" in page.locator(".agents .agent").first.inner_text()

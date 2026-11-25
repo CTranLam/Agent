@@ -10,9 +10,10 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from pydantic import BaseModel, ConfigDict, Field
 
 from .agents.orchestrator import Orchestrator
-from .kb.rag import RAG
-from .kb.store import load_kb
-from .llm import LLM
+from .kb.clinical import demo_patients, load_clinical
+from .kb.kg_queries import QUERIES, patient_report, run_query
+from .kb.rag import RAG, build_rag
+from .kb.neo4j_kb import get_kb
 from .scenarios import SCENARIOS
 from .schemas import PatientProfile
 
@@ -70,6 +71,7 @@ class AnalyzeIn(Strict):
 
 class AskIn(Strict):
     question: str = Field(max_length=1000)
+    generate: bool | None = None  # None: theo cấu hình server; False: chỉ trích đoạn; True: sinh bằng LLM nếu có
 
 
 def parse_series(text: str, unit: str) -> list[float]:
@@ -107,9 +109,9 @@ def create_app(orchestrator: Orchestrator | None = None, rag: RAG | None = None)
     if orchestrator is None:
         from .dl.predictor import Predictor
         from .policy.rl_insulin import QPolicy
-        kb = load_kb()
-        rag = rag or RAG(kb)
-        orchestrator = Orchestrator(Predictor(), kb, rag, QPolicy().load("artifacts/q_table.npy"), LLM())
+        kb = get_kb()
+        rag = rag or build_rag(kb)
+        orchestrator = Orchestrator(Predictor(), kb, rag, QPolicy().load("artifacts/q_table.npy"))
     rag = rag or orchestrator.rag
     app = FastAPI(title="Hệ đa agent hỗ trợ tiểu đường")
 
@@ -136,7 +138,7 @@ def create_app(orchestrator: Orchestrator | None = None, rag: RAG | None = None)
 
     @app.post("/ask")
     def ask(req: AskIn):
-        return rag.answer(req.question, llm=orchestrator.llm)
+        return rag.answer(req.question, req.generate)
 
     @app.get("/scenarios")
     def scenarios():
@@ -146,11 +148,28 @@ def create_app(orchestrator: Orchestrator | None = None, rag: RAG | None = None)
     def graph():
         return graph_data(orchestrator.kb)
 
+    @app.get("/kg/patients")
+    def kg_patients():
+        c = load_clinical()
+        return {"patients": [{"name": p["name"], "title": p["title"]} for p in demo_patients(orchestrator.kb)],
+                "symptoms": [n for g in c["symptoms"] for n in g["names"]], "note": c["note"]}
+
+    @app.get("/kg/patient/{name}")
+    def kg_patient(name: str):
+        if name not in {p["name"] for p in demo_patients(orchestrator.kb)}:
+            raise HTTPException(404, "Không có bệnh nhân mẫu này.")
+        return patient_report(orchestrator.kb, name)
+
+    @app.get("/kg/symptom/{name}")
+    def kg_symptom(name: str):
+        rows, where = run_query("symptom_advice", orchestrator.kb, symptom=name)
+        return {"symptom": name, "backend": where, "cypher": QUERIES["symptom_advice"][1].strip(), "rows": rows}
+
     @app.get("/health")
     def health():
-        llm = orchestrator.llm
-        return {"kb": "bộ nhớ", "dl": "torch" if type(orchestrator.predictor).__name__ == "Predictor" else "giả",
-                "llm": bool(llm and llm.enabled)}
+        return {"kb": orchestrator.kb.meta["backend"], "rag": rag.origin, "retriever": rag.retriever,
+                "llm": rag.generator.name if rag.generator else "tắt",
+                "dl": "torch" if type(orchestrator.predictor).__name__ == "Predictor" else "giả"}
 
     @app.get("/", response_class=HTMLResponse)
     def index():

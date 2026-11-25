@@ -4,11 +4,11 @@ from .base import BaseAgent
 
 
 class ExerciseAgent(BaseAgent):
-    name = "Vận động"
+    name, kind = "ExerciseAgent", "Rule + KB"
 
     def run(self, ctx: AnalysisContext) -> AgentResult:
         p, gate = ctx.profile, exercise_gate(ctx)
-        details = {"allowed": gate.allowed, "intensity": gate.intensity, "reason": gate.reason}
+        details = {"allowed": gate.allowed}
         ev = self.rag.retrieve("an toàn đường huyết khi vận động", k=2, topic="exercise")
         if not gate.allowed:
             return AgentResult(self.name, f"Chưa nên vận động lúc này: {gate.reason}.", details,

@@ -1,0 +1,35 @@
+[
+ {
+  "file": "QD_5481_BYT_2020.pdf",
+  "out": "pdf_byt_5481.md",
+  "source": "Bộ Y tế - QĐ 5481/QĐ-BYT (2020)",
+  "url": "https://canhgiacduoc.org.vn/SiteData/3/UserFiles/HD%20Chan%20doan%20va%20dieu%20tri%20DTD%20tip%202.pdf",
+  "page_offset": 2,
+  "fixes": {
+   "\uf0a7": "-", "\uf0b7": "-", "dinh dư ng": "dinh dưỡng", "ngư ng chẩn đoán": "ngưỡng chẩn đoán", "2-80C": "2-8°C", "<300C": "<30°C", "> 300C": "> 30°C",
+   "carbonhydrate": "carbohydrate", "BN ĐTĐ": "người bệnh đái tháo đường", "ĐTĐTK": "đái tháo đường thai kỳ", "ĐTĐ": "đái tháo đường", "BN ": "người bệnh "
+  },
+  "sections": [
+   {"title": "Tiêu chuẩn chẩn đoán đái tháo đường", "topic": "hyperglycemia", "page": 11, "start": "Tiêu chuẩn chẩn đoán đái tháo đường dựa vào", "end": "Lưu ý:"},
+   {"title": "Mục tiêu điều trị ở người trưởng thành không mang thai", "topic": "hyperglycemia", "page": 21, "start": "Bảng 4:", "end": "Huyết áp"},
+   {"title": "Cá nhân hoá mục tiêu HbA1c", "topic": "hyperglycemia", "page": 21, "start": "Mục tiêu có thể thấp hơn", "end": "- Cần chú ý"},
+   {"title": "Kiểm tra trước khi tập thể dục", "topic": "exercise", "page": 29, "start": "Trước khi bắt đầu chương trình", "end": "b) Tập thể dục"},
+   {"title": "Thể dục khi đường huyết cao và có ceton", "topic": "exercise", "page": 29, "start": "Trên đái tháo đường típ 1 có đường huyết cao", "end": "e) Khuyến cáo"},
+   {"title": "Lượng vận động khuyến cáo mỗi tuần", "topic": "exercise", "page": 30, "start": "Nên tập thể dục 5 ngày", "end": "- Một số hình thức"},
+   {"title": "Giảm cân ở người thừa cân, béo phì", "topic": "nutrition", "page": 30, "start": "Người thừa cân, béo phì", "end": "- Chế độ ăn tăng"},
+   {"title": "Chọn chất bột đường", "topic": "nutrition", "page": 31, "start": "Lượng Glucid ăn vào", "end": "- Chỉ số tăng"},
+   {"title": "Chọn trái cây", "topic": "nutrition", "page": 33, "start": "Ăn trái cây nên ăn", "end": "(xem thêm"},
+   {"title": "Lượng muối theo Bộ Y tế", "topic": "nutrition", "page": 33, "start": "Nên ăn nhạt", "end": "f) Đồ uống"},
+   {"title": "Chất xơ", "topic": "nutrition", "page": 33, "start": "Chất xơ có tác dụng", "end": "5.2.4."},
+   {"title": "Điều trị cơn hạ đường huyết khi còn tỉnh táo", "topic": "hypoglycemia", "page": 42, "start": "Điều trị cơn hạ đường huyết cho người bệnh tỉnh táo", "end": "d) Người bệnh hạ"},
+   {"title": "Phân mức độ hạ đường huyết", "topic": "hypoglycemia", "page": 42, "start": "Hạ đường huyết được chia làm 3 mức độ"},
+   {"title": "Nhận biết sớm hạ đường huyết khi tiêm insulin", "topic": "hypoglycemia", "page": 74, "start": "Cần chỉ dẫn cho BN", "end": "Khi có biểu hiện thần kinh"},
+   {"title": "Bảo quản insulin", "topic": "insulin", "page": 72, "start": "Tốt nhất để ở", "end": "4. Sinh khả dụng"},
+   {"title": "Dùng ống tiêm đúng nồng độ insulin", "topic": "insulin", "page": 72, "start": "Một lọ insulin có 10 mL", "end": "Hiện nay, WHO"},
+   {"title": "Lịch khám mắt", "topic": "complications", "page": 50, "start": "BN ĐTĐ típ 2 cần được khám mắt", "end": "KHUYẾN CÁO VỀ"},
+   {"title": "Khám bàn chân định kỳ", "topic": "complications", "page": 53, "start": "Thực hiện đánh giá bàn chân"},
+   {"title": "Mục tiêu đường huyết trong thai kỳ", "topic": "special_groups", "page": 54, "start": "HbA1c < 6% Đường huyết đói"},
+   {"title": "Tự đo đường huyết tại nhà ở người bệnh ngoại trú", "topic": "hyperglycemia", "page": 58, "start": "Các BN ĐTĐ típ 1 nên được đo"}
+  ]
+ }
+]

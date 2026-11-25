@@ -1,15 +1,20 @@
 """Truy xuất lai: BM25 (từ đơn + bigram) + mở rộng đồng nghĩa + khớp chủ đề."""
+import json
+import logging
 import math
+import os
 import re
 from collections import Counter
+from pathlib import Path
 
-from ..guardrail import is_grounded
 from ..schemas import Evidence
-from .store import KnowledgeBase, fold
+from .generate import Generator, generator_from_env
+from .store import CYPHER_FILE, CYPHER_HEADER, KnowledgeBase, fold
+from .vector import VectorIndex, embedder_from_env, rrf
+
+log = logging.getLogger(__name__)
 
 K1, B = 1.5, 0.75
-ANSWER_SYSTEM = ("Bạn là trợ lý tiểu đường. Chỉ trả lời bằng tiếng Việt, chỉ dựa vào phần Bằng chứng; không thêm con số, "
-                 "liều thuốc hay tên thuốc ngoài bằng chứng. Nếu bằng chứng không đủ thì nói rõ và khuyên hỏi bác sĩ.")
 # Cách nói đời thường -> thuật ngữ trong KB. Khoá và giá trị đều đã bỏ dấu.
 SYNONYMS = {
     "tut duong": "ha duong huyet hypoglycemia", "tut duong huyet": "ha duong huyet hypoglycemia",
@@ -38,6 +43,7 @@ OFF_TOPIC = ("cao toc",)  # shortcut: danh sách tay, chưa lọc hết (vd "nh�
 TREATMENT_TITLE = "Xử trí hạ đường huyết theo quy tắc 15-15"
 DOMAIN_SHORT = {"carb", "lieu", "muoi", "man", "thuoc", "tiem", "tap"}
 MIN_UNIGRAM_LEN = 5  # shortcut: lọc ngoài phạm vi bằng độ dài từ; nếu cần chính xác hơn thì dùng embedding
+RETRIEVERS = {"bm25": "BM25 + bigram + đồng nghĩa", "vector": "vector (embedding, cosine)", "hybrid": "lai BM25 + vector (RRF)"}
 
 
 def tokens(s: str) -> list[str]:
@@ -61,10 +67,67 @@ def _query_features(q: str, question_words: bool = True) -> list[str]:
     return [x for x in t if x not in STOP] + [f"{a}_{b}" for a, b in zip(t, t[1:])]
 
 
+_PROP_KEY = re.compile(r"\s*,?\s*`(\w+)`:\s*")
+_NODE = re.compile(r"^CREATE \(:`(\w+)` \{")
+_EDGE = re.compile(r"^MATCH \(a \{_kid: (\d+)\}\), \(b \{_kid: (\d+)\}\) CREATE \(a\)-\[:`(FROM|ABOUT)` ")
+
+
+def _node_props(line: str, start: int) -> dict:
+    """Thuộc tính do export_kb ghi: tên trong dấu huyền, giá trị dạng JSON. Không dùng eval."""
+    props, decoder, i = {}, json.JSONDecoder(), start
+    while line[i] != "}":
+        key = _PROP_KEY.match(line, i)
+        if not key:
+            raise ValueError(f"Dòng .cypher sai định dạng: {line[:80]}")
+        props[key.group(1)], i = decoder.raw_decode(line, key.end())
+    return props
+
+
+def read_cypher_recommendations(path) -> list[dict]:
+    """Đọc khuyến nghị thẳng từ file export_kb đã xuất"""
+    lines = Path(path).read_text(encoding="utf-8").splitlines()
+    if not lines or lines[0] != CYPHER_HEADER:
+        raise ValueError(f"{path} không phải file KB do export_kb xuất ra.")
+    nodes, links = {}, {}
+    for line in lines[1:]:
+        if m := _NODE.match(line):
+            if m.group(1) in ("Recommendation", "Source", "Topic"):
+                props = _node_props(line, m.end())
+                nodes[props["_kid"]] = props
+        elif m := _EDGE.match(line):
+            links[(int(m.group(1)), m.group(3))] = int(m.group(2))
+    recs = sorted((n for n in nodes.values() if "title" in n), key=lambda n: n["seq"])
+    if not recs:
+        raise ValueError(f"{path} không có khuyến nghị nào.")
+    out = []
+    for n in recs:
+        source, topic = links.get((n["_kid"], "FROM")), links.get((n["_kid"], "ABOUT"))
+        if source not in nodes or topic not in nodes:
+            raise ValueError(f"Khuyến nghị '{n['title']}' thiếu nguồn hoặc chủ đề trong {path}.")
+        out.append({"title": n["title"], "text": n["text"], "source": nodes[source]["name"],
+                    "url": nodes[source]["url"], "topic": nodes[topic]["name"]})
+    return out
+
+
+def build_rag(kb: KnowledgeBase, path=None) -> "RAG":
+    """Chat dùng file .cypher nếu có; chưa xuất file thì dùng KB. File hỏng thì báo lỗi, không âm thầm bỏ qua.
+    RAG_RETRIEVER=bm25|vector|hybrid chọn bộ truy xuất; LLM_BASE_URL + LLM_MODEL bật bước sinh câu trả lời."""
+    path = Path(path or os.getenv("KB_CYPHER", CYPHER_FILE))
+    opts = {"retriever": os.getenv("RAG_RETRIEVER", "bm25"), "embedder": embedder_from_env(), "generator": generator_from_env()}
+    if not path.exists():
+        log.warning("Không có %s, RAG dùng dữ liệu KB.", path)
+        return RAG(kb, **opts)
+    return RAG(kb, read_cypher_recommendations(path), "file .cypher", **opts)
+
+
 class RAG:
-    def __init__(self, kb: KnowledgeBase):
-        self.kb = kb
-        self.docs = kb.recommendations
+    def __init__(self, kb: KnowledgeBase, docs: list[dict] | None = None, origin: str = "KB",
+                 retriever: str = "bm25", embedder=None, generator: Generator | None = None):
+        if retriever not in RETRIEVERS:
+            raise ValueError(f"RAG_RETRIEVER không hợp lệ: {retriever} (chọn {', '.join(RETRIEVERS)})")
+        self.kb, self.origin, self.retriever, self.generator = kb, origin, retriever, generator
+        self._embedder, self._index = embedder, None
+        self.docs = kb.recommendations if docs is None else docs
         self._tf = [Counter(features(d["title"]) * 2 + features(d["text"])) for d in self.docs]
         self._len = [sum(c.values()) for c in self._tf]
         self._avg = sum(self._len) / len(self._len)
@@ -80,16 +143,41 @@ class RAG:
                 s += self._idf[t] * f * (K1 + 1) / (f + K1 * (1 - B + B * self._len[i] / self._avg))
         return s
 
-    def retrieve(self, query: str, k: int = 3, topic: str | None = None) -> list[Evidence]:
-        q = Counter(_query_features(query))
+    def in_scope(self, query: str) -> bool:
+        """Bộ lọc ngoài phạm vi dùng chung cho mọi bộ truy xuất (BM25, vector, lai)."""
         if any(p in " ".join(tokens(query)) for p in OFF_TOPIC):
-            return []
+            return False
         # ngoài phạm vi: phải khớp bigram hoặc một từ đủ dài, không chỉ vài âm tiết rời
         unexpanded = set(tokens(query))
         useful = {t for t in _query_features(query, question_words=False)
                   if t not in GENERIC and (t in self._idf or t in unexpanded & DOMAIN_SHORT) and ("_" in t or len(t) >= MIN_UNIGRAM_LEN or t in DOMAIN_SHORT)}
-        if not useful:
+        return bool(useful)
+
+    @property
+    def index(self) -> VectorIndex:
+        """Kho vector dựng lần đầu khi cần, để chế độ BM25 không tốn thời gian khởi động."""
+        if self._index is None:
+            self._index = VectorIndex(self.docs, self._embedder)
+        return self._index
+
+    def _evidence(self, i: int, score: float) -> Evidence:
+        d = self.docs[i]
+        return Evidence(d["source"], d["title"], d["text"], round(score, 3), d["url"])
+
+    def retrieve(self, query: str, k: int = 3, topic: str | None = None, method: str | None = None) -> list[Evidence]:
+        method = method or self.retriever
+        if not self.in_scope(query):
             return []
+        if method == "bm25":
+            hits = self._bm25_ranked(query, topic)
+        elif method == "vector":
+            hits = self.index.search(expand_query(query))
+        else:
+            hits = rrf([i for _, i in self._bm25_ranked(query, topic)], [i for _, i in self.index.search(expand_query(query))])
+        return [self._evidence(i, s) for s, i in hits[:k]]
+
+    def _bm25_ranked(self, query: str, topic: str | None = None) -> list[tuple[float, int]]:
+        q = Counter(_query_features(query))
         raw = [self._bm25(q, i) for i in range(len(self.docs))]
         top = max(raw)
         if top <= 0:
@@ -103,25 +191,28 @@ class RAG:
                    + (0.6 if "hypoglycemia" in hits and self.docs[i]["title"] == TREATMENT_TITLE else 0.0), i)
                   for i in range(len(self.docs)) if raw[i] > 0]
         scored.sort(key=lambda x: (-x[0], x[1]))
-        return [Evidence(self.docs[i]["source"], self.docs[i]["title"], self.docs[i]["text"], round(s, 3))
-                for s, i in scored[:k]]
+        return scored
 
     def extractive(self, evidence: list[Evidence]) -> str:
         if not evidence:
             return "Không tìm thấy thông tin phù hợp trong cơ sở tri thức. Hãy hỏi về tiểu đường hoặc hỏi bác sĩ."
         return "\n\n".join(f"{i + 1}. {e.title}\n{e.text}\n(Nguồn: {e.source})" for i, e in enumerate(evidence))
 
-    def answer(self, question: str, llm=None) -> dict:
+    def answer(self, question: str, generate: bool | None = None) -> dict:
+        """generate=None: theo cấu hình server; False: chỉ trích; True: sinh nếu đã cấu hình LLM."""
         ev = self.retrieve(question)
-        result = {"answer": self.extractive(ev), "evidence": [vars(e) for e in ev], "mode": "extractive", "note": None}
-        if not ev or llm is None or not llm.enabled:
-            return result
-        src = "\n".join(f"[{e.source}] {e.title}: {e.text}" for e in ev)
-        out = llm.complete(ANSWER_SYSTEM, f"Bằng chứng:\n{src}\n\nCâu hỏi: {question}")
-        if out is None:
-            result["note"] = f"LLM lỗi ({llm.last_error}), dùng đoạn trích."
-        elif is_grounded(out, src)[0]:
-            result.update(answer=out, mode="llm")
+        out = {"answer": self.extractive(ev), "evidence": [vars(e) for e in ev], "mode": "extractive",
+               "retriever": RETRIEVERS[self.retriever]}
+        if generate is False or not ev:
+            return out  # không có đoạn trích thì không gọi LLM: tránh trả lời ngoài cơ sở tri thức
+        if self.generator is None:
+            if generate:
+                out["fallback_reason"] = "chưa cấu hình LLM (LLM_BASE_URL, LLM_MODEL)"
+            return out
+        g = self.generator.generate(question, ev)
+        out["guard"] = g.guard
+        if g.ok:
+            out.update(answer=g.text, mode="generated", model=self.generator.name)
         else:
-            result["note"] = "Đã bỏ câu trả lời của LLM vì chứa số liệu ngoài bằng chứng."
-        return result
+            out["fallback_reason"] = g.reason
+        return out

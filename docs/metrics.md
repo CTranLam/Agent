@@ -47,7 +47,12 @@ Sinh tự động bởi `python -m diabetes_mas.eval.report_metrics`.
 
 | Bộ truy xuất | Recall@3 | MRR |
 |---|---|---|
-| Đếm từ trùng | 0.548 | 0.526 |
-| BM25 + bigram + đồng nghĩa | 0.968 | 0.958 |
+| Đếm từ trùng | 0.483 | 0.462 |
+| BM25 + bigram + đồng nghĩa | 0.931 | 0.849 |
+| Vector: LSA (TF-IDF + SVD), cosine | 0.897 | 0.823 |
+| Lai BM25 + vector (RRF) | 0.931 | 0.849 |
 
-31 câu hỏi. **Giới hạn:** Bộ câu hỏi do chính người viết KB soạn nên số đo có xu hướng lạc quan; bộ lọc từ chuyên môn ngắn được thêm sau khi thấy câu trượt.
+Hệ thống mặc định dùng BM25 (`RAG_RETRIEVER=bm25`); đổi sang `vector` hoặc `hybrid` qua biến môi trường. Vector LSA học từ chính vài chục đoạn trong KB nên chưa hiểu đồng nghĩa thật; embedding từ mô hình ngôn ngữ (`EMBED_BASE_URL`, `EMBED_MODEL`) sẽ cho số khác, cần đo lại bằng lệnh trên.
+
+
+29 câu hỏi. **Giới hạn:** Bộ câu hỏi do chính người viết KB soạn nên số đo có xu hướng lạc quan; bộ lọc từ chuyên môn ngắn được thêm sau khi thấy câu trượt.

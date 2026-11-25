@@ -19,7 +19,8 @@
     "egfr_lt_30": "chống chỉ định khi eGFR <30",
     "egfr_lt_45": "cân nhắc giảm liều, không khởi trị khi eGFR 30-45",
     "pregnancy": "không khuyến cáo trong thai kỳ, thường chuyển sang insulin: hỏi bác sĩ sản khoa"
-   }
+   },
+   "url": "https://www.vinmec.com/vie/bai-viet/cong-dung-thuoc-glucophage-750mg-vi"
   },
   {
    "name": "gliclazide",
@@ -41,7 +42,8 @@
     "egfr_lt_30": "không dùng khi suy thận nặng, tăng nguy cơ hạ đường huyết kéo dài",
     "age_ge_75": "người cao tuổi dễ hạ đường huyết",
     "pregnancy": "không khuyến cáo trong thai kỳ, thường chuyển sang insulin: hỏi bác sĩ sản khoa"
-   }
+   },
+   "url": "https://www.vinmec.com/vie/bai-viet/trong-voi-cac-thuoc-dieu-tri-dai-thao-duong-vi"
   },
   {
    "name": "pioglitazone",
@@ -60,7 +62,8 @@
    "notes": {
     "heart_failure": "giữ nước, làm nặng suy tim",
     "pregnancy": "không khuyến cáo trong thai kỳ"
-   }
+   },
+   "url": "https://www.vinmec.com/vie/bai-viet/trong-voi-cac-thuoc-dieu-tri-dai-thao-duong-vi"
   },
   {
    "name": "sitagliptin",
@@ -71,7 +74,8 @@
    "cautions": [
     "egfr_lt_45",
     "pancreatitis_history",
-    "pregnancy"
+    "pregnancy",
+    "heart_failure"
    ],
    "not_for_types": [
     "T1"
@@ -79,8 +83,10 @@
    "notes": {
     "egfr_lt_45": "cần giảm liều theo eGFR",
     "pancreatitis_history": "thận trọng khi có tiền sử viêm tụy",
-    "pregnancy": "không khuyến cáo trong thai kỳ, thường chuyển sang insulin: hỏi bác sĩ sản khoa"
-   }
+    "pregnancy": "không khuyến cáo trong thai kỳ, thường chuyển sang insulin: hỏi bác sĩ sản khoa",
+    "heart_failure": "nhóm DPP-4 có thể làm người suy tim rơi vào tình trạng nguy hiểm, cần bác sĩ theo dõi"
+   },
+   "url": "https://www.vinmec.com/vie/bai-viet/cac-loai-thuoc-dieu-tri-lam-tang-nguy-co-suy-tim-thuong-gap-vi"
   },
   {
    "name": "linagliptin",
@@ -90,15 +96,18 @@
    "contraindications": [],
    "cautions": [
     "pancreatitis_history",
-    "pregnancy"
+    "pregnancy",
+    "heart_failure"
    ],
    "not_for_types": [
     "T1"
    ],
    "notes": {
     "pancreatitis_history": "thận trọng khi có tiền sử viêm tụy",
-    "pregnancy": "không khuyến cáo trong thai kỳ, thường chuyển sang insulin: hỏi bác sĩ sản khoa"
-   }
+    "pregnancy": "không khuyến cáo trong thai kỳ, thường chuyển sang insulin: hỏi bác sĩ sản khoa",
+    "heart_failure": "nhóm DPP-4 có thể làm người suy tim rơi vào tình trạng nguy hiểm, cần bác sĩ theo dõi"
+   },
+   "url": "https://www.vinmec.com/vie/bai-viet/cac-loai-thuoc-dieu-tri-lam-tang-nguy-co-suy-tim-thuong-gap-vi"
   },
   {
    "name": "empagliflozin",
@@ -117,7 +126,8 @@
     "type1_dka": "nguy cơ nhiễm toan ceton ở type 1",
     "egfr_lt_20": "chưa đủ dữ liệu khi eGFR rất thấp, cần bác sĩ đánh giá",
     "pregnancy": "không khuyến cáo trong thai kỳ, thường chuyển sang insulin: hỏi bác sĩ sản khoa"
-   }
+   },
+   "url": "https://www.vinmec.com/vie/bai-viet/cong-dung-thuoc-jardiance-duo-vi"
   },
   {
    "name": "liraglutide",
@@ -138,7 +148,8 @@
     "mtc_men2": "chống chỉ định khi có tiền sử ung thư giáp thể tủy/MEN2",
     "pancreatitis_history": "thận trọng khi có tiền sử viêm tụy",
     "pregnancy": "không khuyến cáo trong thai kỳ"
-   }
+   },
+   "url": "https://www.vinmec.com/vie/bai-viet/cac-nhom-thuoc-dieu-tri-tieu-duong-type-2-vi"
   },
   {
    "name": "insulin aspart",
@@ -149,7 +160,8 @@
    "contraindications": [],
    "cautions": [],
    "not_for_types": [],
-   "notes": {}
+   "notes": {},
+   "url": "https://www.vinmec.com/vie/bai-viet/luu-y-su-dung-insulin-toan-cho-nguoi-benh-tieu-duong-vi"
   },
   {
    "name": "insulin glargine",
@@ -160,7 +172,8 @@
    "contraindications": [],
    "cautions": [],
    "not_for_types": [],
-   "notes": {}
+   "notes": {},
+   "url": "https://www.vinmec.com/vie/bai-viet/luu-y-su-dung-insulin-toan-cho-nguoi-benh-tieu-duong-vi"
   }
  ],
  "interactions": [
@@ -213,12 +226,6 @@
    "condition": "heart_failure",
    "alternative": "empagliflozin",
    "why": "có lợi trên suy tim"
-  },
-  {
-   "drug": "pioglitazone",
-   "condition": "heart_failure",
-   "alternative": "sitagliptin",
-   "why": "trung tính trên suy tim"
   },
   {
    "drug": "metformin",

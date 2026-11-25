@@ -64,7 +64,7 @@ def audit(ctx: AnalysisContext, results: dict[str, AgentResult]) -> list[Finding
                 if d.get("meal"):
                     cancel("meal", "A8", "bệnh nhân không dùng insulin")
         if (d.get("correction"), d.get("meal")) != before:
-            # văn bản phải khớp liều đã sửa, kể cả phần đưa cho LLM
+            # văn bản phải khớp liều đã sửa
             med.actions[:] = [a for a in med.actions if not a.startswith(("Liều bù tham khảo", "Liều bữa ăn tham khảo"))]
             med.summary = f"Auditor đã điều chỉnh liều: bù {d.get('correction') or 0:g} đv, bữa ăn {d.get('meal') or 0:g} đv."
 
@@ -76,7 +76,7 @@ def audit(ctx: AnalysisContext, results: dict[str, AgentResult]) -> list[Finding
             kept = [a for a in r.actions if not any(w in a.lower() for w in EXERCISE_WORDS)]
             if len(kept) != len(r.actions):
                 r.actions[:] = kept
-                out.append(Finding("A5", f"gỡ lời khuyên vận động của agent {r.agent}: {gate.reason}"))
+                out.append(Finding("A5", f"gỡ lời khuyên vận động của {r.agent}: {gate.reason}"))
 
     if ctx.glucose < C.HYPO_L2 or ctx.glucose >= C.HYPER_CRITICAL:
         has_critical = any(a.level == "critical" for r in results.values() for a in r.alerts)

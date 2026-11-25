@@ -72,7 +72,7 @@ def test_unknown_drug_reported():  # Review Focus 3
 def test_contraindication_and_alternative():
     r = med_agent().run(ctx(PatientProfile(medications=["pioglitazone"], heart_failure=True), code="T2"))
     assert any(a.level == "critical" for a in r.alerts)
-    assert any("sitagliptin" in s.lower() or "linagliptin" in s.lower() for s in r.actions)
+    assert any("empagliflozin" in s.lower() for s in r.actions) and not any("sitagliptin" in s.lower() for s in r.actions)
 
 def test_alternative_not_suggested_if_already_taken():
     r = med_agent().run(ctx(PatientProfile(medications=["pioglitazone", "sitagliptin"], heart_failure=True)))

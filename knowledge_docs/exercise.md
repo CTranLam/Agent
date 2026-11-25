@@ -1,19 +1,23 @@
 ## Mức vận động khuyến nghị
-source: ADA Standards of Care
+source: Vinmec - Các bài tập cho bệnh tiểu đường: Đi bộ, Yoga, Bơi lội và các môn khác
+url: https://www.vinmec.com/vie/bai-viet/cac-bai-tap-cho-benh-tieu-duong-di-bo-yoga-boi-loi-va-cac-mon-khac-vi
 topic: exercise
-Tối thiểu 150 phút mỗi tuần vận động cường độ trung bình như đi bộ nhanh, đạp xe, chia ít nhất 3 ngày, không nghỉ quá 2 ngày liên tiếp. Tập kháng lực 2-3 buổi mỗi tuần, không liên tiếp.
+Người tiểu đường có thể chọn đi bộ, yoga, bơi lội, pilates. Với đi bộ nhanh, nên tập khoảng 30 phút mỗi ngày, liên tục 5 ngày trong tuần.
 
 ## An toàn đường huyết khi vận động
-source: ADA Standards of Care
+source: Vinmec - Hướng dẫn tự chăm sóc bệnh tiểu đường type 1
+url: https://www.vinmec.com/vie/bai-viet/huong-dan-tu-cham-soc-benh-tieu-duong-type-1-vi
 topic: exercise
-Đo đường huyết trước khi tập. Dưới 90 mg/dL nên ăn nhẹ carbohydrate trước. Trên 250 mg/dL ở người dùng insulin hoặc type 1 cần kiểm tra ceton trước; có ceton thì không tập. Mang theo carbohydrate nhanh khi tập.
+Kiểm tra đường huyết trước, trong và sau khi tập; không tập khi đường huyết cao hơn 240. Nếu đường huyết dưới 100-120 hãy ăn một quả táo hoặc uống ly sữa trước khi tập và mang theo bữa ăn nhẹ.
 
-## Vận động khi có bệnh tim mạch
-source: ADA Standards of Care
+## Tập luyện sau bữa ăn
+source: Vinmec - 10 động tác cơ bắp kiềm soát đường huyết và bệnh tiểu đường tại nhà
+url: https://www.vinmec.com/vie/bai-viet/10-dong-tac-co-bap-kiem-che-benh-tieu-duong-vi
 topic: exercise
-Người có bệnh tim mạch nên được đánh giá trước khi tăng cường độ. Dừng tập và gọi cấp cứu nếu đau ngực, khó thở nhiều hoặc choáng.
+Tập trong vòng một hoặc hai giờ sau bữa ăn có thể làm đường huyết giảm tự nhiên. Nên kiểm tra đường huyết trước, trong và sau khi tập.
 
-## Đi bộ sau ăn
-source: ADA Standards of Care
+## Vận động khi có vấn đề bàn chân
+source: Vinmec - 10 động tác cơ bắp kiềm soát đường huyết và bệnh tiểu đường tại nhà
+url: https://www.vinmec.com/vie/bai-viet/10-dong-tac-co-bap-kiem-che-benh-tieu-duong-vi
 topic: exercise
-Đi bộ nhẹ 10-15 phút sau bữa ăn giúp giảm đường huyết sau ăn. Hạn chế ngồi lâu, cứ 30 phút nên đứng dậy vận động nhẹ.
+Nên ưu tiên các bài tập không dồn áp lực lên bàn chân như tập ở tư thế ngồi, nằm trên sàn hoặc bơi lội.

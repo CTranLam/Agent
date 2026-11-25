@@ -1,14 +1,17 @@
 ## An toàn khi dùng insulin
-source: ADA Standards of Care
+source: Vinmec - Lưu ý sử dụng insulin an toàn cho người bệnh tiểu đường
+url: https://www.vinmec.com/vie/bai-viet/luu-y-su-dung-insulin-toan-cho-nguoi-benh-tieu-duong-vi
 topic: insulin
-Liều insulin phải được bác sĩ cá thể hóa theo hệ số nhạy ISF và tỷ lệ insulin/carbohydrate ICR. Không tiêm liều bù mới khi insulin tác dụng nhanh trước đó còn hoạt động (thường 3-5 giờ) vì nguy cơ hạ đường huyết do cộng dồn.
-
-## Đếm carbohydrate và liều bữa ăn
-source: ADA Standards of Care
-topic: insulin
-Liều bữa ăn phụ thuộc lượng carbohydrate thực tế sẽ ăn chia cho ICR. Cần biết chính xác lượng carbohydrate định ăn; không đoán khi chưa rõ bữa ăn.
+Thời gian từ lúc tiêm đến lúc ăn tuỳ loại insulin, với loại bán chậm (lente, NPH, insulatard) là 60 phút. Ăn muộn hơn thời gian này thì nguy cơ hạ đường huyết rất cao.
 
 ## Kỹ thuật tiêm insulin
-source: Bộ Y tế - Hướng dẫn chẩn đoán và điều trị đái tháo đường típ 2
+source: Vinmec - Bệnh nhân đái tháo đường nên biết tiêm insulin cho phù hợp
+url: https://www.vinmec.com/vie/bai-viet/huong-dan-tiem-insulin-dung-ky-thuat-vi
 topic: insulin
-Thay đổi vị trí tiêm thường xuyên để tránh loạn dưỡng mỡ, không dùng chung bút tiêm, bảo quản insulin theo hướng dẫn, kiểm tra hạn dùng trước khi tiêm.
+Sát khuẩn vị trí tiêm và giữ da sạch. Bụng là vị trí hay được chọn, mũi tiêm nên cách rốn khoảng 5cm. Đổi vị trí tiêm liên tục để tránh loạn dưỡng tại vùng tiêm.
+
+## Nhóm thuốc phối hợp với insulin
+source: Vinmec - Thận trọng với các thuốc điều trị đái tháo đường
+url: https://www.vinmec.com/vie/bai-viet/trong-voi-cac-thuoc-dieu-tri-dai-thao-duong-vi
+topic: insulin
+Tiêm insulin thuộc nhóm có nguy cơ hạ đường huyết cao, cùng với sulfonylurea và glinide. Khi dùng cần theo dõi đường huyết và trao đổi với bác sĩ.

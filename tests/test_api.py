@@ -50,7 +50,7 @@ def test_ask_empty():
 
 def test_ask_returns_evidence():
     j = client().post("/ask", json={"question": "tụt đường phải làm gì"}).json()
-    assert j["mode"] == "extractive" and j["evidence"][0]["source"]
+    assert j["evidence"][0]["source"] and j["evidence"][0]["title"] in j["answer"]
 
 def test_scenarios_and_index():
     c = client()
@@ -67,7 +67,7 @@ def test_every_scenario_round_trips(key):
 
 def test_health():
     j = client().get("/health").json()
-    assert j["llm"] is False and {"kb", "dl"} <= set(j)
+    assert set(j) == {"kb", "rag", "retriever", "llm", "dl"} and j["rag"] == "KB" and j["llm"] == "tắt"
 
 def test_graph():
     j = client().get("/graph").json()
@@ -75,3 +75,25 @@ def test_graph():
     assert {"metformin", "egfr_lt_30"} <= ids
     assert {"contraindicated", "caution", "substitute", "interacts"} <= {e["kind"] for e in j["edges"]}
     assert all(e["from"] in ids and e["to"] in ids for e in j["edges"])
+
+def test_no_external_llm_dependency():
+    from pathlib import Path
+    src = "".join(p.read_text(encoding="utf-8") for p in Path("diabetes_mas").rglob("*.py"))
+    assert "anthropic" not in src.lower()
+    assert "anthropic" not in Path("requirements.txt").read_text()
+
+
+def test_kg_patients_and_multi_hop():
+    c = client()
+    j = c.get("/kg/patients").json()
+    assert len(j["patients"]) == 8 and "Vã mồ hôi" in j["symptoms"]
+    rep = c.get("/kg/patient/Ca 7").json()
+    assert rep["backend"] == "bộ nhớ"
+    assert rep["queries"]["drug_review"]["rows"][0]["alternative"] == "empagliflozin"
+    assert "MATCH (p:Patient" in rep["queries"]["drug_review"]["cypher"]
+    assert c.get("/kg/patient/Khong co").status_code == 404
+    assert c.get("/kg/symptom/Vã mồ hôi").json()["rows"][0]["disease"] == "Hạ đường huyết"
+
+def test_ask_can_force_extractive():
+    j = client().post("/ask", json={"question": "tụt đường phải làm gì", "generate": False}).json()
+    assert j["mode"] == "extractive" and j["evidence"]

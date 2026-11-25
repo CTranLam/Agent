@@ -1,14 +1,17 @@
 ## Đái tháo đường thai kỳ và mang thai
-source: ADA Standards of Care
+source: Vinmec - Chế độ ăn cho người bị tiểu đường thai kỳ
+url: https://www.vinmec.com/vie/bai-viet/che-do-cho-nguoi-bi-tieu-duong-thai-ky-vi
 topic: special_groups
-Phụ nữ mang thai có mục tiêu đường huyết chặt hơn và cần theo dõi bởi bác sĩ chuyên khoa. Nhiều thuốc uống không được khuyến cáo, insulin thường là lựa chọn ưu tiên. Không giảm cân trong thai kỳ.
+Thai phụ nên ăn đủ đạm, bột đường, chất béo và chất xơ (20-35 g mỗi ngày), tập thể dục thường xuyên và khám thai định kỳ theo lịch để bác sĩ theo dõi.
 
 ## Người cao tuổi
-source: ADA Standards of Care
+source: Vinmec - Lưu ý sử dụng insulin an toàn cho người bệnh tiểu đường
+url: https://www.vinmec.com/vie/bai-viet/luu-y-su-dung-insulin-toan-cho-nguoi-benh-tieu-duong-vi
 topic: special_groups
-Người cao tuổi nhiều bệnh kèm có thể dùng mục tiêu HbA1c nới lỏng hơn và ưu tiên tránh hạ đường huyết. Cần chú ý nguy cơ ngã, suy dinh dưỡng và tương tác thuốc.
+Người cao tuổi có mục tiêu đường huyết nới lỏng hơn: 5,6 đến 8,3 mmol/l lúc đói và dưới 11,1 mmol/l sau bữa ăn.
 
 ## Trẻ em và thanh thiếu niên
-source: ADA Standards of Care
+source: Vinmec - Duy trì mức glucose trong máu khi điều trị tiểu đường type 1
+url: https://www.vinmec.com/vie/bai-viet/duy-tri-muc-glucose-trong-mau-khi-dieu-tri-tieu-duong-type-1-vi
 topic: special_groups
-Trẻ em đái tháo đường cần kế hoạch chăm sóc tại trường, theo dõi tăng trưởng và hỗ trợ tâm lý. Liều thuốc và mục tiêu do bác sĩ nhi khoa nội tiết quyết định.
+Mục tiêu vận động cho trẻ em là ít nhất một giờ tập thể dục mỗi ngày; người lớn ít nhất 150 phút mỗi tuần. Nên hỏi bác sĩ trước khi chọn môn tập.
